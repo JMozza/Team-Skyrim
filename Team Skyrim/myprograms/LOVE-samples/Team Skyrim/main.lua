@@ -8,11 +8,11 @@ function love.load()
   pSprite = 0 -- sprite from spritesheet player is on on current frame
   pSpeed = 3 -- constant; player's speed
   pGround = love.graphics.getHeight() -- height of the ground the player is currently over
-  pWidth = 50 -- constant; player's width
-  pHeight = 50 -- constant; player's height
-  pX = 100 -- player's x co-ordinate
+  pWidth = 25 -- constant; player's width
+  pHeight = 25 -- constant; player's height
+  pX = 0 -- player's x co-ordinate
   pY = pGround - pHeight -- player's y co-ordinate
-  pDirection = 1 --  for left, 1 for right
+  pDirection = 1 -- 0 for left, 1 for right
   pJumpHeight = 20 -- constant; pixels the player rises in the first frame of a jump
   pGravity = 2 -- constant; force due to gravity acting on player
   pHeightFromJump = 0 -- pixels player is rising on current frame
@@ -26,24 +26,42 @@ function love.load()
   platforms = {}
   platformImage = love.graphics.newImage("sprites/Placeholder2.png")
   
-  platform = {} -- new platform
-  platform.Width = platformImage:getWidth() -- constant; player's width
-  platform.Height = platformImage:getHeight() -- constant; player's height
-  platform.X = 200 -- platform's x co-ordinate
-  platform.Y = love.graphics.getHeight() - platform.Height -- platform's y co-ordinate
-  platform.GroundFound = false -- used for ground check
-  table.insert(platforms, platform)
+  for i=0,2 do
+    platform = {} -- new platform
+    platform.Width = platformImage:getWidth() -- constant; player's width
+    platform.Height = platformImage:getHeight() -- constant; player's height
+    if i == 0 then
+      platform.X = 100 -- platform's x co-ordinate
+      platform.Y = love.graphics.getHeight() - platform.Height -- platform's y co-ordinate
+    elseif i == 1 then
+      platform.X = 150 -- platform's x co-ordinate
+      platform.Y = love.graphics.getHeight() - platform.Height - 50 -- platform's y co-ordinate
+    else
+      platform.X = 200 -- platform's x co-ordinate
+      platform.Y = love.graphics.getHeight() - platform.Height - 100 -- platform's y co-ordinate
+    end
+    platform.GroundFound = false -- used for ground check
+    table.insert(platforms, platform)
+  end
 end
 
 function love.mousepressed(x, y, button, isTouch)
-  if x < 160 then -- move left
-    pMovingLeft = true
-  elseif x >= 320 then -- move right
-    pMovingRight = true
-  else -- jump
-    if pY == pGround - pHeight then
-      pState = 1
-      pHeightFromJump = 15
+  if y < 135 then
+    if x < 160 then -- move left
+      pMovingLeft = true
+    elseif x >= 320 then -- move right
+      pMovingRight = true
+    else -- jump
+      if pY == pGround - pHeight then
+        pState = 1
+        pHeightFromJump = 20
+      end
+    end
+  else
+    if pState == 0 then -- fall through a platform
+      pHeightFromJump = -1
+      pY = pY - pHeightFromJump
+      pState = 2
     end
   end
 end
@@ -132,19 +150,23 @@ function PlayerFall() -- function makes player fall after falling off a ledge or
 end
 
 function CheckLeftWalls() -- function stops a player from passing through a platform's left wall
-  for i,v in ipairs(platforms) do
-    local hitTest = CheckCollision(v.X, v.Y + 1, 1, v.Height - 2, pX, pY, pWidth, pHeight)
-    if hitTest then
-      pX = v.X - pWidth
+  if pState ~= 1 then
+    for i,v in ipairs(platforms) do
+      local hitTest = CheckCollision(v.X, v.Y + 1, 1, v.Height - 2, pX, pY, pWidth, pHeight)
+      if hitTest then
+        pX = v.X - pWidth
+      end
     end
   end
 end
 
 function CheckRightWalls() -- function stops a player from passing through a platform's right wall
-  for i,v in ipairs(platforms) do
-    local hitTest = CheckCollision(v.X + v.Width - 1, v.Y + 1, 1, v.Height - 2, pX, pY, pWidth, pHeight)
-    if hitTest then
-      pX = v.X + v.Width
+  if pState ~= 1 then
+    for i,v in ipairs(platforms) do
+      local hitTest = CheckCollision(v.X + v.Width - 1, v.Y + 1, 1, v.Height - 2, pX, pY, pWidth, pHeight)
+      if hitTest then
+        pX = v.X + v.Width
+      end
     end
   end
 end
