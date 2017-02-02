@@ -1,6 +1,6 @@
 function love.load()
   -- variables for game
-  gameState = 0 -- 0 for main menu, 1 for in a game mode, add game state definitions here
+  gameState = 1 -- 0 for main menu, 1 for in a game mode, 2 for level completion, add game state definitions here
   gameMode = 0 -- 0 for english, 1 for maths, 2 for science
   
   -- variables for player
@@ -28,8 +28,8 @@ function love.load()
   
   for i=0,2 do
     platform = {} -- new platform
-    platform.Width = platformImage:getWidth() -- constant; player's width
-    platform.Height = platformImage:getHeight() -- constant; player's height
+    platform.Width = platformImage:getWidth() -- constant; platform's width
+    platform.Height = platformImage:getHeight() -- constant; platform's height
     if i == 0 then
       platform.X = 100 -- platform's x co-ordinate
       platform.Y = love.graphics.getHeight() - platform.Height -- platform's y co-ordinate
@@ -43,13 +43,43 @@ function love.load()
     platform.GroundFound = false -- used for ground check
     table.insert(platforms, platform)
   end
+  
+  --variables for collectables
+  collectables = {} -- collectables on the screen
+  collectableCount = 0 -- amount of collectables
+  collectableImage = love.graphics.newImage("sprites/Placeholder3.png")
+  
+  for i=0,2 do
+    collectable = {} -- new collectable
+    collectable.Width = collectableImage:getWidth() -- constant; collectable's width
+    collectable.Height = collectableImage:getHeight() -- constant; collectable's height
+    if i == 0 then
+      collectable.X = 200 -- collectable's x co-ordinate
+      collectable.Y = love.graphics.getHeight() - collectable.Height -- collectable's y co-ordinate
+      collectable.Letter = "A" -- letter the collectable represents
+    elseif i == 1 then
+      collectable.X = 200 -- collectable's x co-ordinate
+      collectable.Y = love.graphics.getHeight() - collectable.Height - 200 -- collectable's y co-ordinate
+      collectable.Letter = "B" -- letter the collectable represents
+    else
+      collectable.X = 0 -- collectable's x co-ordinate
+      collectable.Y = love.graphics.getHeight() - collectable.Height - 100 -- collectable's y co-ordinate
+      collectable.Letter = "C" -- letter the collectable represents
+    end
+    table.insert(collectables, collectable)
+    collectableCount = collectableCount + 1 -- increment collectable count
+  end
+  
+  -- variables for collected letters
+  letters = {} -- collected letters
+  letterCount = 0 -- amount of letters
 end
 
 function love.mousepressed(x, y, button, isTouch)
-  if y < 135 then
-    if x < 160 then -- move left
+  if y < 240 then
+    if x < 90 then -- move left
       pMovingLeft = true
-    elseif x >= 320 then -- move right
+    elseif x >= 180 then -- move right
       pMovingRight = true
     else -- jump
       if pY == pGround - pHeight then
@@ -72,19 +102,40 @@ function love.mousereleased(x, y, button, isTouch)
 end
 
 function love.update(dt)
-  CheckGround()
-  PlayerMove()
-  PlayerJump()
-  PlayerFall()
-  CheckLeftWalls()
-  CheckRightWalls()
+  if gameState == 1 then
+    CheckGround()
+    PlayerMove()
+    PlayerJump()
+    PlayerFall()
+    CheckCollectables()
+    CheckLeftWalls()
+    CheckRightWalls()
+  end
+  
+  if collectableCount == 0 then
+    gameState = 2
+  end
 end
 
 function love.draw()
   for i,v in ipairs(platforms) do
     love.graphics.draw(platformImage, v.X, v.Y)
   end
+  for i,v in ipairs(collectables) do
+    love.graphics.draw(collectableImage, v.X, v.Y)
+  end
   love.graphics.draw(pImage, pQuad, pX, pY)
+  
+  if gameState == 2 then
+    for i,v in ipairs(letters) do
+      love.graphics.print(v.Letter, (i - 1) * 10, 0) -- letters collected throughout the game display in top left corner once they're all collected
+    end
+    love.graphics.print("GAME COMPLETE", 100, 100) -- completion message
+  else
+    love.graphics.print("controls: top left to move left. top middle", 0, 100) -- controls
+    love.graphics.print("to jump. top right to move right. bottom to", 0, 120)
+    love.graphics.print("fall through platform.", 0, 140)
+  end
 end
 
 function CheckGround() -- function finds height of ground beneath the player and decides if the player has fallen off a platform
@@ -145,6 +196,19 @@ function PlayerFall() -- function makes player fall after falling off a ledge or
       pHeightFromJump = 0
       pState = 0
       pY = pGround - pHeight
+    end
+  end
+end
+
+function CheckCollectables() -- function checks if any collectables have been collected
+  for i,v in ipairs(collectables) do
+    local hitTest = CheckCollision(v.X, v.Y, v.Width, v.Height, pX, pY, pWidth, pHeight)
+    if hitTest then
+      letter = {}
+      letter.Letter = v.Letter
+      table.insert(letters, letter)
+      table.remove(collectables, i)
+      collectableCount = collectableCount - 1
     end
   end
 end
