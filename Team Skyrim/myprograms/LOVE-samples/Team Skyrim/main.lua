@@ -1,15 +1,4 @@
 function love.load()
-  width = 480
-  height = 270
-  if love.system.getOS() == "Android" then
-    local x, y = love.graphics.getDimensions()
-    scaleX = (x/width)
-    scaleY = (y/height)
-  else
-    scaleX = 1
-    scaleY = 1
-  end
-  
   -- variables for game
   gameState = 1 -- 0 for main menu, 1 for in a game mode, 2 for level completion, add game state definitions here
   gameMode = 0 -- 0 for english, 1 for maths, 2 for science
@@ -19,8 +8,8 @@ function love.load()
   pSprite = 0 -- sprite from spritesheet player is on on current frame
   pSpeed = 3 -- constant; player's speed
   pGround = love.graphics.getHeight() -- height of the ground the player is currently over
-  pWidth = 25 * scaleX -- constant; player's width
-  pHeight = 25 * scaleY-- constant; player's height
+  pWidth = 25 -- constant; player's width
+  pHeight = 25 -- constant; player's height
   pX = 0 -- player's x co-ordinate
   pY = pGround - pHeight -- player's y co-ordinate
   pDirection = 1 -- 0 for left, 1 for right
@@ -39,17 +28,17 @@ function love.load()
   
   for i=0,2 do
     platform = {} -- new platform
-    platform.Width = platformImage:getWidth() * scaleX-- constant; platform's width
-    platform.Height = platformImage:getHeight() * scaleY-- constant; platform's height
+    platform.Width = platformImage:getWidth() -- constant; platform's width
+    platform.Height = platformImage:getHeight() -- constant; platform's height
     if i == 0 then
-      platform.X = love.graphics.getWidth() / 4.8-- platform's x co-ordinate
-      platform.Y = love.graphics.getHeight() / 1.22727 -- platform's y co-ordinate
+      platform.X = 100 -- platform's x co-ordinate
+      platform.Y = love.graphics.getHeight() - platform.Height -- platform's y co-ordinate
     elseif i == 1 then
-      platform.X = love.graphics.getWidth() / 3.2-- platform's x co-ordinate
-      platform.Y = love.graphics.getHeight() / 1.58824-- platform's y co-ordinate
+      platform.X = 150 -- platform's x co-ordinate
+      platform.Y = love.graphics.getHeight() - platform.Height - 50 -- platform's y co-ordinate
     else
-      platform.X = love.graphics.getWidth() / 2.4-- platform's x co-ordinate
-      platform.Y = love.graphics.getHeight() / 2.25-- platform's y co-ordinate
+      platform.X = 200 -- platform's x co-ordinate
+      platform.Y = love.graphics.getHeight() - platform.Height - 100 -- platform's y co-ordinate
     end
     platform.GroundFound = false -- used for ground check
     table.insert(platforms, platform)
@@ -62,21 +51,25 @@ function love.load()
   
   for i=0,2 do
     collectable = {} -- new collectable
-    collectable.Width = collectableImage:getWidth() * scaleX-- constant; collectable's width
-    collectable.Height = collectableImage:getHeight() * scaleY-- constant; collectable's height
+    collectable.Width = collectableImage:getWidth() -- constant; collectable's width
+    collectable.Height = collectableImage:getHeight() -- constant; collectable's height
     if i == 0 then
-      collectable.X = love.graphics.getWidth() / 2.4 -- collectable's x co-ordinate
-      collectable.Y = love.graphics.getHeight() / 1.22727-- collectable's y co-ordinate
-      collectable.Letter = "A" -- letter the collectable represents
-    elseif i == 1 then
-      collectable.X = love.graphics.getWidth() / 2.4 -- collectable's x co-ordinate
-      collectable.Y = love.graphics.getHeight() / 13.5 -- collectable's y co-ordinate
-      collectable.Letter = "B" -- letter the collectable represents
-    else
       collectable.X = 0 -- collectable's x co-ordinate
-      collectable.Y = love.graphics.getHeight() / 2.25-- collectable's y co-ordinate
+      collectable.Y = love.graphics.getHeight() - collectable.Height - 100 -- collectable's y co-ordinate
       collectable.Letter = "C" -- letter the collectable represents
+      collectable.Order = 0 -- first letter in the word
+    elseif i == 1 then
+      collectable.X = 200 -- collectable's x co-ordinate
+      collectable.Y = love.graphics.getHeight() - collectable.Height - 200 -- collectable's y co-ordinate
+      collectable.Letter = "A" -- letter the collectable represents
+      collectable.Order = 1 -- second letter in the word
+    else
+      collectable.X = 200 -- collectable's x co-ordinate
+      collectable.Y = love.graphics.getHeight() - collectable.Height -- collectable's y co-ordinate
+      collectable.Letter = "T" -- letter the collectable represents
+      collectable.Order = 2 -- third letter in the word
     end
+    collectable.CorrectOrder = true -- false if collectable has been collected in the wrong order
     table.insert(collectables, collectable)
     collectableCount = collectableCount + 1 -- increment collectable count
   end
@@ -84,62 +77,60 @@ function love.load()
   -- variables for collected letters
   letters = {} -- collected letters
   letterCount = 0 -- amount of letters
-  
-  love.window.setMode(width * scaleX, height * scaleY)
+  letterOrder = 0 -- identity of collectable the player should next collect
+  correctLetterOrder = true -- true if all letters have currently been collected in the correct order
+  incorrectLetterImage = love.graphics.newImage("sprites/Placeholder4.png")
 end
 
 function love.mousepressed(x, y, button, isTouch)
-  if y < ((love.graphics.getHeight() / 3) * 2) then
-    if x < (love.graphics.getWidth() / 4) then -- move left
-      pMovingLeft = true
-    elseif x >= ((love.graphics.getWidth() / 4) * 3) then -- move right
-      pMovingRight = true
-    end
-    
-    if (x > love.graphics.getWidth() / 4 and x < ((love.graphics.getWidth() / 4) * 3)) then-- jump
-      if pY == pGround - pHeight then
-        pState = 1
-        pHeightFromJump = 20
+  local letterTouched = false
+  
+  for i,v in ipairs(letters) do
+    if v.CorrectOrder == false then
+      if y <= 50 then
+        if x > letterOrder * 50 then
+          if x <= letterOrder * 50 + 50 then
+            correctLetterOrder = true
+            for i,v in ipairs(collectables) do
+              if v.CorrectOrder == false then
+                v.CorrectOrder = true
+              end
+            end
+            table.remove(letters, i)
+            letterTouched = true
+          end
+        end
       end
     end
-  else
-    if pState == 0 then -- fall through a platform
-      pHeightFromJump = -1
-      pY = pY - pHeightFromJump
-      pState = 2
+  end
+  
+  if letterTouched == false then
+    if y < 240 then
+      if x < 90 then -- move left
+        pMovingLeft = true
+        pMovingRight = false
+      elseif x >= 180 then -- move right
+        pMovingLeft = false
+        pMovingRight = true
+      else -- jump
+        pMovingLeft = false
+        pMovingRight = false
+        if pY == pGround - pHeight then
+          pState = 1
+          pHeightFromJump = 20
+        end
+      end
+    else
+      if pState == 0 then -- fall through a platform
+        pHeightFromJump = -1
+        pY = pY - pHeightFromJump
+        pState = 2
+      end
     end
   end
 end
 
 function love.mousereleased(x, y, button, isTouch)
-  pMovingLeft = false
-  pMovingRight = false
-end
-
-function love.touchpressed( id, x, y, dx, dy, pressure )
-  if (y * love.graphics.getHeight()) < ((love.graphics.getHeight() / 3) * 2) then
-    if (x * love.graphics.getWidth()) < (love.graphics.getWidth() / 4) then -- move left
-      pMovingLeft = true
-    elseif (x * love.graphics.getWidth()) >= ((love.graphics.getWidth() / 4) * 3) then -- move right
-      pMovingRight = true
-    end
-    
-    if(x * love.graphics.getWidth() > love.graphics.getWidth() / 4 and x * love.graphics.getWidth() < ((love.graphics.getWidth() / 4) * 3)) then -- jump
-      if pY == pGround - pHeight then
-        pState = 1
-        pHeightFromJump = 20
-      end
-    end
-  else
-    if pState == 0 then -- fall through a platform
-      pHeightFromJump = -1
-      pY = pY - pHeightFromJump
-      pState = 2
-    end
-  end
-end
-
-function love.touchreleased( id, x, y, dx, dy, pressure )
   pMovingLeft = false
   pMovingRight = false
 end
@@ -155,31 +146,39 @@ function love.update(dt)
     CheckRightWalls()
   end
   
-  if collectableCount == 0 then
+  if collectableCount == 0 then -- level complete
     gameState = 2
   end
 end
 
-function love.draw()  
+function love.draw()
+  love.graphics.setNewFont(50)
   for i,v in ipairs(platforms) do
-    love.graphics.draw(platformImage, v.X, v.Y, 0, 1 * scaleX, 1 * scaleY)
+    love.graphics.draw(platformImage, v.X, v.Y)
   end
   for i,v in ipairs(collectables) do
-    love.graphics.draw(collectableImage, v.X, v.Y, 0, 1 * scaleX, 1 * scaleY)
+    if v.CorrectOrder then
+      love.graphics.draw(collectableImage, v.X, v.Y)
+      love.graphics.print(v.Letter, v.X, v.Y)
+    end
+  end
+  for i,v in ipairs(letters) do
+    if v.CorrectOrder then
+      love.graphics.draw(collectableImage, (i - 1) * 50, 0)
+    else
+      love.graphics.draw(incorrectLetterImage, (i - 1) * 50, 0)
+    end
+    love.graphics.print(v.Letter, (i - 1) * 50, 0)
   end
   love.graphics.draw(pImage, pQuad, pX, pY)
   
-    if gameState == 2 then
-    for i,v in ipairs(letters) do
-      love.graphics.print(v.Letter, (i - 1) * 10, 0) -- letters collected throughout the game display in top left corner once they're all collected
-    end
-    love.graphics.print("GAME COMPLETE", 100, 100) -- completion message
-  else
+  love.graphics.setNewFont(12)
+  if gameState == 1 then
     love.graphics.print("controls: top left to move left. top middle", 0, 100) -- controls
     love.graphics.print("to jump. top right to move right. bottom to", 0, 120)
     love.graphics.print("fall through platform.", 0, 140)
-    love.graphics.print(scaleX, 200, 140)
-    love.graphics.print(scaleY, 200, 160)
+  else
+    love.graphics.print("GAME COMPLETE", 100, 100) -- completion message
   end
 end
 
@@ -246,14 +245,24 @@ function PlayerFall() -- function makes player fall after falling off a ledge or
 end
 
 function CheckCollectables() -- function checks if any collectables have been collected
-  for i,v in ipairs(collectables) do
-    local hitTest = CheckCollision(v.X, v.Y, v.Width, v.Height, pX, pY, pWidth, pHeight)
-    if hitTest then
-      letter = {}
-      letter.Letter = v.Letter
-      table.insert(letters, letter)
-      table.remove(collectables, i)
-      collectableCount = collectableCount - 1
+  if correctLetterOrder then -- collectables can only be collected if all letters have been collected in the correct order
+    for i,v in ipairs(collectables) do
+      local hitTest = CheckCollision(v.X, v.Y, v.Width, v.Height, pX, pY, pWidth, pHeight)
+      if hitTest then
+        letter = {}
+        letter.Letter = v.Letter
+        if v.Order == letterOrder then
+          table.remove(collectables, i)
+          collectableCount = collectableCount - 1
+          letterOrder = letterOrder + 1
+          letter.CorrectOrder = true
+        else
+          v.CorrectOrder = false
+          letter.CorrectOrder = false
+          correctLetterOrder = false
+        end
+        table.insert(letters, letter)
+      end
     end
   end
 end
