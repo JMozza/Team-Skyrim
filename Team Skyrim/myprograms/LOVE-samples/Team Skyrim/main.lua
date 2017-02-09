@@ -1,4 +1,14 @@
+local anim8 = require "anim8"
+require "menu" --Main menu
+require "oMenu" --Options menu
+require "dMenu" --Difficulty level Menu
+--require "pMenu" --Pause Menu
+require "soundBar" --Soundbar in options menu
+require "cMenu" --Character Selection Menu
+require "sMenu" --Scoreboard Menu
+
 function love.load()
+  gamestate = "menu"
   width = 270
   height = 480
   if love.system.getOS() == "Android" then
@@ -10,8 +20,63 @@ function love.load()
     scaleY = 1
   end
  
+  --fonts
+  font = love.graphics.newFont("fonts/goodd.ttf", 28)
+  optionfont = love.graphics.newFont("fonts/goodd.ttf", 12)
+  subtitlefont = love.graphics.newFont("fonts/goodd.ttf", 34)
+  
+ 
+  --images for menu
+  titleSpritesheet = love.graphics.newImage("sprites/titleAnimation.png")
+  placeholder = love.graphics.newImage("sprites/placeholderTitle.png")
+  checkbox = love.graphics.newImage("sprites/checkbox.png")
+  tick = love.graphics.newImage("sprites/tick.png")
+  tile = love.graphics.newImage("sprites/tile.png")
+
+  --Animation Variables
+  grid = anim8.newGrid(240,56, titleSpritesheet:getWidth(), titleSpritesheet:getHeight())
+  animation = anim8.newAnimation(grid("1-13", 1), 0.08)
+
+  --Main Menu Buttons
+  --90 200
+  button_spawn(90,150, "Play Game","1")
+  button_spawn(55,210, "Character Select","2")
+  button_spawn(88,270, "Scoreboard","3")
+  button_spawn(102,330, "Options","4")
+  button_spawn(115,390, "Quit","5")
+    
+  --Option Menu Buttons
+  oButton_spawn(70,410, "Return To Menu","1")
+  oButton_spawn(20,90, "-","2")
+  oButton_spawn(250,90, "+","3")
+  oButton_spawn(20,170, "-","4")
+  oButton_spawn(250,170, "+","5")
+  oButton_spawn(64,250, "Toggle Sounds","6")
+  oButton_spawn(72,330, "Visit Our Site","7")
+  
+  --Difficulty Level Buttons
+  dButton_spawn(115,170, "Easy","1")
+  dButton_spawn(80,250, "intermediate","2")
+  dButton_spawn(95,330, "Advanced","3")
+  dButton_spawn(70,410, "Return To Menu","4")
+
+  --Character Selection Buttons
+  cButton_spawn(70,420, "Return To Menu","1")
+  
+  --Scoreboard Menu Buttons
+  sButton_spawn(70,420, "Return To Menu","1")
+  
+  --Pause Menu Buttons
+  --pButton_spawn(178,20, "Resume","1")
+  --pButton_spawn(160,70, "Return To Menu","2")
+  --pButton_spawn(460,70, "Quit","3")
+
+  --volume control variables (unused vriables at the moment, allow volume control in the options menu)
+  v_music = 1
+  v_effects = 1
+ 
  -- variables for game
-  gameState = 1 -- 0 for main menu, 1 for in a game mode, 2 for level completion, add game state definitions here
+  --gameState = 1 -- 0 for main menu, 1 for in a game mode, 2 for level completion, add game state definitions here
   gameMode = 0 -- 0 for english, 1 for maths, 2 for science
   
   -- variables for player
@@ -145,6 +210,26 @@ function love.mousepressed(x, y, button, isTouch)
       end
     end
   end
+  
+  if gamestate == "menu" then
+    button_click(x,y)
+  end
+  
+  if gamestate == "scoreboard" then
+    sButton_click(x,y)
+  end
+    
+  if gamestate == "character" then
+    cButton_click(x,y)
+  end
+    
+  if gamestate == "levelSelect" then
+    dButton_click(x,y)
+  end
+  
+  if gamestate == "options" then
+    oButton_click(x,y)
+  end
 end
 
 function love.mousereleased(x, y, button, isTouch)
@@ -206,7 +291,48 @@ function love.touchreleased( id, x, y, dx, dy, pressure )
 end
 
 function love.update(dt)
-  if gameState == 1 then
+  
+  mousex = love.mouse.getX()
+  mousey = love.mouse.getY()
+  
+  if gamestate == "menu" then
+    button_check()
+    animation:update(dt)
+  end
+  
+  if gamestate == "character" then
+    cButton_check()
+    animation:update(dt)
+  end
+  
+  if gamestate == "scoreboard" then
+    sButton_check()
+    animation:update(dt)
+  end
+  
+  if gamestate == "options" then
+    oButton_check()
+    animation:update(dt)
+  end
+    
+  if gamestate == "easy" and love.keyboard.isDown("return") then
+    gamestate = "levelSelect"
+  end
+  
+  if gamestate == "intermediate" and love.keyboard.isDown("return") then
+    gamestate = "levelSelect"
+  end
+  
+  if gamestate == "advanced" and love.keyboard.isDown("return") then
+    gamestate = "levelSelect"
+  end
+    
+  if gamestate == "levelSelect" then
+    dButton_check()
+    animation:update(dt)
+  end
+  
+  if gamestate == "easy" then
     CheckGround()
     PlayerMove()
     PlayerJump()
@@ -217,7 +343,7 @@ function love.update(dt)
   end
   
   if collectableCount == 0 then -- level complete
-    gameState = 2
+    gamestate = "easyComplete"
   end
 end
 
@@ -244,15 +370,69 @@ function love.draw()
   love.graphics.draw(pImage, pQuad, pX, pY)
   
   love.graphics.setNewFont(12)
-  if gameState == 1 then
+  
+  if gamestate == "easy" then
     love.graphics.print("controls: top left to move left. top middle", 0, 100)  -- controls
     love.graphics.print("to jump. top right to move right. bottom to", 0, 120)
     love.graphics.print("fall through platform.", 0, 140)
   else
     love.graphics.print("GAME COMPLETE", 100, 100) -- completion message
   end
+  
+  if gamestate == "intermediate" then
+    love.graphics.print("Not added yet ",10,10)
+  end
+  
+  if gamestate == "advanced" then
+    love.graphics.print("Not added yet ",10,10)       
+  end
+      
+  if gamestate == "menu" then
+    love.graphics.draw(placeholder, 0, 0)
+    animation:draw(titleSpritesheet, 15, 15)
+    button_draw()
+  end
+  
+  if gamestate == "levelSelect" then
+    love.graphics.draw(placeholder, 0, 0)
+    dButton_draw()
+    animation:draw(titleSpritesheet, 15, 15)
+    love.graphics.setColor(0,255,233)
+    love.graphics.setFont(subtitlefont)
+    love.graphics.print("Select Difficulty", 45, 90)   
+    love.graphics.setColor(255,255,255)
+  end
+  
+  if gamestate == "scoreboard" then
+    love.graphics.draw(placeholder, 0, 0)
+    sButton_draw()
+    animation:draw(titleSpritesheet, 15, 15)
+    love.graphics.setColor(0,255,12)
+    love.graphics.setFont(subtitlefont)
+    love.graphics.print("Your High Scores", 50, 90)
+    love.graphics.setColor(255,255,255)
+  end
+  
+  if gamestate == "character" then
+    love.graphics.draw(placeholder, 0, 0)
+    cButton_draw()
+    love.graphics.setColor(255,0,255)
+    love.graphics.setFont(subtitlefont)
+    love.graphics.print("Select your character", 20, 90)
+    love.graphics.setColor(255,255,255)
+    animation:draw(titleSpritesheet, 15, 15)
+    love.graphics.setColor(255,255,255)
+  end
+    
+  if gamestate == "options" then
+    love.graphics.setFont(optionfont)
+    love.graphics.draw(placeholder, 0, 0)
+    animation:draw(titleSpritesheet, 15, 15)
+    oButton_draw()
+    love.graphics.draw(checkbox, 185, 251)    
+    sound_bars()
+  end
 end
-
 function CheckGround() -- function finds height of ground beneath the player and decides if the player has fallen off a platform
   for i,v in ipairs(platforms) do
     if pX > v.X - pWidth then
