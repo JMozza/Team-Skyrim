@@ -10,6 +10,24 @@ function love.load()
     scaleY = 1
   end
  
+  --------------------------Physics--------------------------------
+  love.physics.setMeter(64)
+  world = love.physics.newWorld(0, 9.81*64, true)
+  
+  objects = {}
+  
+  objects.platform1 = {}
+  objects.platform1.body = love.physics.newBody(world, width/2+50, 300) 
+  objects.platform1.shape = love.physics.newRectangleShape(150, 50) --make a rectangle with a width of 650 and a height of 50
+  objects.platform1.fixture = love.physics.newFixture(objects.platform1.body, objects.platform1.shape); --attach shape to body
+  
+  objects.block1 = {}
+  objects.block1.body = love.physics.newBody(world, width/2+220, 50, "dynamic") --place the body in the center of the world and make it dynamic, so it can move around
+  objects.block1.shape = love.physics.newRectangleShape(40, 40) --make a rectangle with a width of 650 and a height of 50
+  objects.block1.fixture = love.physics.newFixture(objects.block1.body, objects.block1.shape, 1) -- Attach fixture to body and give it a density of 1.
+  objects.block1.fixture:setRestitution(0) --let the ball bounce
+  objects.block1.body:setMass(10)
+  --------------------------Physics--------------------------------
  -- variables for game
   gameState = 1 -- 0 for main menu, 1 for in a game mode, 2 for level completion, add game state definitions here
   gameMode = 0 -- 0 for english, 1 for maths, 2 for science
@@ -99,6 +117,13 @@ function love.load()
   love.window.setMode(width * scaleX, height * scaleY)
 end
 
+function love.keypressed(key)
+   if key == "space" then
+      startCount = 1
+      objects.block1.body:applyAngularImpulse(-1000)
+      objects.block1.body:applyLinearImpulse(-850, -2000)
+   end
+end
 function love.mousepressed(x, y, button, isTouch)
   local letterTouched = false
   
@@ -216,6 +241,12 @@ function love.update(dt)
     CheckRightWalls()
   end
   
+  -----------------Physics-------------
+  if startCount == 1 then
+    world:update(dt) --this puts the world into motion
+  end
+  -----------------Physics-------------
+  
   if collectableCount == 0 then -- level complete
     gameState = 2
   end
@@ -251,6 +282,12 @@ function love.draw()
   else
     love.graphics.print("GAME COMPLETE", 100, 100) -- completion message
   end
+  -----------------Physics-------------
+  love.graphics.setColor(200, 200, 200)
+  love.graphics.polygon("line", objects.platform1.body:getWorldPoints(objects.platform1.shape:getPoints())) 
+  love.graphics.setColor(200, 200, 200)
+  love.graphics.polygon("line", objects.block1.body:getWorldPoints(objects.block1.shape:getPoints()))
+  -----------------Physics-------------
 end
 
 function CheckGround() -- function finds height of ground beneath the player and decides if the player has fallen off a platform
