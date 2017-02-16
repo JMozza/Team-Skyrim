@@ -132,18 +132,16 @@ function love.load()
     if i == 0 then
       collectable.X = 0 -- collectable's x co-ordinate
       collectable.Y = love.graphics.getHeight() / 1.263158 -- collectable's y co-ordinate
-      collectable.Letter = "C" -- letter the collectable represents
-      collectable.Order = 0 -- first letter in the word
+      collectable.Letter = "B" -- letter the collectable represents
+      nextLetter = collectable.Letter -- the letter that should be collected next
     elseif i == 1 then
       collectable.X = love.graphics.getWidth() / 1.35 -- collectable's x co-ordinate
       collectable.Y = love.graphics.getHeight() / 2.086957 -- collectable's y co-ordinate
-      collectable.Letter = "A" -- letter the collectable represents
-      collectable.Order = 1 -- second letter in the word
+      collectable.Letter = "E" -- letter the collectable represents
     else
       collectable.X = love.graphics.getWidth() / 1.35 -- collectable's x co-ordinate
-      collectable.Y = love.graphics.getHeight() / 1.1162
-      collectable.Letter = "T" -- letter the collectable represents
-      collectable.Order = 2 -- third letter in the word
+      collectable.Y = love.graphics.getHeight() / 1.1162 -- collectable's y co-ordinate
+      collectable.Letter = "E" -- letter the collectable represents
     end
     collectable.CorrectOrder = true -- false if collectable has been collected in the wrong order
     table.insert(collectables, collectable)
@@ -153,9 +151,16 @@ function love.load()
   -- variables for collected letters
   letters = {} -- collected letters
   letterCount = 0 -- amount of letters
-  letterOrder = 0 -- identity of collectable the player should next collect
   correctLetterOrder = true -- true if all letters have currently been collected in the correct order
   incorrectLetterImage = love.graphics.newImage("sprites/Placeholder4.png")
+  
+  -- variables for stars
+  stars = {} -- stars earned. every round starts with 3 stars. stars get taken away for errors and are presented at the end of a level
+  for i=0,2 do
+    star = {} -- new star
+    table.insert(stars, star)
+  end
+  starImage = love.graphics.newImage("sprites/Placeholder5.png")
   
   spriteScalerX = 1 * scaleX
   spriteScalerY = 1 * scaleY
@@ -170,8 +175,8 @@ function love.mousepressed(x, y, button, isTouch)
   for i,v in ipairs(letters) do
     if v.CorrectOrder == false then
       if y <= 50 then
-        if x > letterOrder * 50 then
-          if x <= letterOrder * 50 + 50 then
+        if x > letterCount * 50 then
+          if x <= letterCount * 50 + 50 then
             correctLetterOrder = true
             for i,v in ipairs(collectables) do
               if v.CorrectOrder == false then
@@ -238,7 +243,7 @@ function love.mousereleased(x, y, button, isTouch)
 end
 
 function love.touchpressed( id, x, y, dx, dy, pressure )
-local letterTouched = false
+  local letterTouched = false
   
   for i,v in ipairs(letters) do
     if v.CorrectOrder == false then
@@ -364,7 +369,6 @@ function love.draw()
     else
       love.graphics.draw(incorrectLetterImage, (i - 1) * 50, 0, 0, spriteScalerX, spriteScalerY)
     end
-    love.graphics.setNewFont(50)
     love.graphics.print(v.Letter, (i - 1) * 50, 0)
   end
   love.graphics.draw(pImage, pQuad, pX, pY)
@@ -377,6 +381,10 @@ function love.draw()
     love.graphics.print("fall through platform.", 0, 140)
   else
     love.graphics.print("GAME COMPLETE", 100, 100) -- completion message
+    for i,v in ipairs(stars) do
+      love.graphics.draw(starImage, (i - 1) * 50, 200)
+      love.graphics.print("STAR", (i - 1) * 50, 200)
+    end
   end
   
   if gamestate == "intermediate" then
@@ -502,15 +510,27 @@ function CheckCollectables() -- function checks if any collectables have been co
       if hitTest then
         letter = {}
         letter.Letter = v.Letter
-        if v.Order == letterOrder then
+        if v.Letter == nextLetter then
           table.remove(collectables, i)
-          collectableCount = collectableCount - 1
-          letterOrder = letterOrder + 1
           letter.CorrectOrder = true
+          letterCount = letterCount + 1
+          collectableCount = collectableCount - 1
+          
+          if next(collectables) ~= nil then
+            local first = true
+            for i,v in ipairs(collectables) do
+              if first then
+                nextLetter = v.Letter
+                first = false
+              end
+            end
+          end
+          
         else
           v.CorrectOrder = false
           letter.CorrectOrder = false
           correctLetterOrder = false
+          table.remove(stars)
         end
         table.insert(letters, letter)
       end
