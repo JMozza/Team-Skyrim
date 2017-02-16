@@ -33,6 +33,10 @@ function love.load()
   checkbox = love.graphics.newImage("sprites/checkbox.png")
   tick = love.graphics.newImage("sprites/tick.png")
   tile = love.graphics.newImage("sprites/tile.png")
+  
+  --images for gamescreen
+  gamebackground = love.graphics.newImage("sprites/background/#BG - Copy.png")
+  letter = love.graphics.newImage("sprites/testletter.jpg")
 
   --Animation Variables
   grid = anim8.newGrid(240,56, titleSpritesheet:getWidth(), titleSpritesheet:getHeight())
@@ -84,27 +88,27 @@ function love.load()
   objects = {}
   
   objects.platform1 = {}
-  objects.platform1.body = love.physics.newBody(world, width/2+90, 331) 
+  objects.platform1.body = love.physics.newBody(world, width/2+103, 251) 
   objects.platform1.shape = love.physics.newRectangleShape(50, 1) --make a rectangle with a width of 650 and a height of 50
   objects.platform1.fixture = love.physics.newFixture(objects.platform1.body, objects.platform1.shape); --attach shape to body
   
   objects.platform2 = {}
-  objects.platform2.body = love.physics.newBody(world, 25, 430) 
+  objects.platform2.body = love.physics.newBody(world, 80, 140) 
   objects.platform2.shape = love.physics.newRectangleShape(50, 1) --make a rectangle with a width of 650 and a height of 50
   objects.platform2.fixture = love.physics.newFixture(objects.platform2.body, objects.platform2.shape); --attach shape to body
   
   objects.block1 = {}
-  objects.block1.body = love.physics.newBody(world, width/2+165, 50, "dynamic") --place the body in the center of the world and make it dynamic, so it can move around
+  objects.block1.body = love.physics.newBody(world, width/2+176, -20, "dynamic") --place the body in the center of the world and make it dynamic, so it can move around
   objects.block1.shape = love.physics.newRectangleShape(40, 40) --make a rectangle with a width of 650 and a height of 50
   objects.block1.fixture = love.physics.newFixture(objects.block1.body, objects.block1.shape, 1) -- Attach fixture to body and give it a density of 1.
-  objects.block1.fixture:setRestitution(0) --let the ball bounce
+  objects.block1.fixture:setRestitution(0) --bounce
   objects.block1.body:setMass(10)
   
   objects.block2 = {}
-  objects.block2.body = love.physics.newBody(world, -65, 80, "dynamic") --place the body in the center of the world and make it dynamic, so it can move around
+  objects.block2.body = love.physics.newBody(world, -10, -210, "dynamic") --place the body in the center of the world and make it dynamic, so it can move around
   objects.block2.shape = love.physics.newRectangleShape(40, 40) --make a rectangle with a width of 650 and a height of 50
   objects.block2.fixture = love.physics.newFixture(objects.block2.body, objects.block2.shape, 1) -- Attach fixture to body and give it a density of 1.
-  objects.block2.fixture:setRestitution(0) --let the ball bounce
+  objects.block2.fixture:setRestitution(0) --bounce
   objects.block2.body:setMass(10)
   --------------------------Physics--------------------------------
 -->>>>>>> origin/Physics
@@ -392,7 +396,8 @@ function love.update(dt)
   
   -----------------Physics-------------
   if startCount == 1 then
-    world:update(dt) --this puts the world into motion
+    world:update(dt)
+     --this puts the world into motion
   end
   -----------------Physics-------------
   
@@ -425,6 +430,7 @@ function love.draw()
   love.graphics.setNewFont(12)
   
   if gamestate == "easy" then
+    love.graphics.draw(gamebackground, 0, 0)
     love.graphics.print("controls: top left to move left. top middle", 0, 100)  -- controls
     love.graphics.print("to jump. top right to move right. bottom to", 0, 120)
     love.graphics.print("fall through platform.", 0, 140)
@@ -494,10 +500,12 @@ function love.draw()
   --love.graphics.polygon("line", objects.platform1.body:getWorldPoints(objects.platform1.shape:getPoints())) 
   --love.graphics.setColor(200, 200, 200)
   --love.graphics.polygon("line", objects.platform2.body:getWorldPoints(objects.platform2.shape:getPoints())) 
+  love.graphics.setColor(255, 0, 0)
+  --love.graphics.draw(letter, objects.block1.body:getWorldPoints(objects.block1.shape:getPoints()))
+  love.graphics.polygon("fill", objects.block1.body:getWorldPoints(objects.block1.shape:getPoints()))
+  love.graphics.setColor(0, 0, 255)
+  love.graphics.polygon("fill", objects.block2.body:getWorldPoints(objects.block2.shape:getPoints()))
   love.graphics.setColor(200, 200, 200)
-  love.graphics.polygon("line", objects.block1.body:getWorldPoints(objects.block1.shape:getPoints()))
-  love.graphics.setColor(200, 200, 200)
-  love.graphics.polygon("line", objects.block2.body:getWorldPoints(objects.block2.shape:getPoints()))
   -----------------Physics-------------
 end
 function CheckGround() -- function finds height of ground beneath the player and decides if the player has fallen off a platform
