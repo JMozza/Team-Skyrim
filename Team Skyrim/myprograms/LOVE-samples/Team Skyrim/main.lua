@@ -22,13 +22,15 @@ function love.load()
  
 --<<<<<<< HEAD
   --fonts
-  font = love.graphics.newFont("fonts/goodd.ttf", 28)
-  optionfont = love.graphics.newFont("fonts/goodd.ttf", 12)
-  subtitlefont = love.graphics.newFont("fonts/goodd.ttf", 34)
+  font = love.graphics.newFont("fonts/goodd.ttf", 28 * scaleX)
+  optionfont = love.graphics.newFont("fonts/goodd.ttf", 12 * scaleX)
+  subtitlefont = love.graphics.newFont("fonts/goodd.ttf", 34 * scaleX)
+  font_12 = love.graphics.newFont(12* scaleX)
+  font_50 = love.graphics.newFont(50)
   
  
   --images for menu
-  titleSpritesheet = love.graphics.newImage("sprites/titleAnimation.png")
+  titleSpritesheet = love.graphics.newImage("sprites/TitleAnimation.png")
   placeholder = love.graphics.newImage("sprites/placeholderTitle.png")
   checkbox = love.graphics.newImage("sprites/checkbox.png")
   tick = love.graphics.newImage("sprites/tick.png")
@@ -40,32 +42,32 @@ function love.load()
 
   --Main Menu Buttons
   --90 200
-  button_spawn(90,150, "Play Game","1")
-  button_spawn(55,210, "Character Select","2")
-  button_spawn(88,270, "Scoreboard","3")
-  button_spawn(102,330, "Options","4")
-  button_spawn(115,390, "Quit","5")
+  button_spawn(90 * scaleX ,150 * scaleY, "Play Game","1")
+  button_spawn(55 * scaleX,210 * scaleY, "Character Select","2")
+  button_spawn(88 * scaleX,270 * scaleY, "Scoreboard","3")
+  button_spawn(102 * scaleX,330 * scaleY, "Options","4")
+  button_spawn(115 * scaleX,390 * scaleY, "Quit","5")
     
   --Option Menu Buttons
-  oButton_spawn(70,410, "Return To Menu","1")
-  oButton_spawn(20,90, "-","2")
-  oButton_spawn(250,90, "+","3")
-  oButton_spawn(20,170, "-","4")
-  oButton_spawn(250,170, "+","5")
-  oButton_spawn(64,250, "Toggle Sounds","6")
-  oButton_spawn(72,330, "Visit Our Site","7")
+  oButton_spawn(70 * scaleX,410 * scaleY, "Return To Menu","1")
+  oButton_spawn(20 * scaleX,90 * scaleY, "-","2")
+  oButton_spawn(250 * scaleX,90 * scaleY, "+","3")
+  oButton_spawn(20 * scaleX, 170 * scaleY, "-","4")
+  oButton_spawn(250 * scaleX,170 * scaleY, "+","5")
+  oButton_spawn(64 * scaleX,250 * scaleY, "Toggle Sounds","6")
+  oButton_spawn(72 * scaleX,330 * scaleY, "Visit Our Site","7")
   
   --Difficulty Level Buttons
-  dButton_spawn(115,170, "Easy","1")
-  dButton_spawn(80,250, "intermediate","2")
-  dButton_spawn(95,330, "Advanced","3")
-  dButton_spawn(70,410, "Return To Menu","4")
+  dButton_spawn(115 * scaleX,170 * scaleY, "Easy","1")
+  dButton_spawn(80 * scaleX,250 * scaleY, "intermediate","2")
+  dButton_spawn(95 * scaleX,330 * scaleY, "Advanced","3")
+  dButton_spawn(70 * scaleX,410 * scaleY, "Return To Menu","4")
 
   --Character Selection Buttons
-  cButton_spawn(70,420, "Return To Menu","1")
+  cButton_spawn(70 * scaleX,420 * scaleY, "Return To Menu","1")
   
   --Scoreboard Menu Buttons
-  sButton_spawn(70,420, "Return To Menu","1")
+  sButton_spawn(70 * scaleX,420 * scaleY, "Return To Menu","1")
   
   --Pause Menu Buttons
   --pButton_spawn(178,20, "Resume","1")
@@ -123,7 +125,7 @@ function love.load()
   pY = pGround - pHeight -- player's y co-ordinate
   pDirection = 1 -- 0 for left, 1 for right
   pJumpHeight = 20 * scaleX -- constant; pixels the player rises in the first frame of a jump
-  pGravity = 2 * scaleX-- constant; force due to gravity acting on player
+  pGravity = 2 * scaleX -- constant; force due to gravity acting on player
   pHeightFromJump = 0 -- pixels player is rising on current frame
   pMovingLeft = false -- true if player is being instructed to move left
   pMovingRight = false -- true if player is being instructed to move right
@@ -199,6 +201,8 @@ function love.load()
   spriteScalerY = 1 * scaleY
   yPressCheck = 50 * scaleY
   
+  hastouched = false
+  
   love.window.setMode(width * scaleX, height * scaleY)
 end
 
@@ -213,48 +217,50 @@ function love.keypressed(key)
 end
 
 function love.mousepressed(x, y, button, isTouch)
-  local letterTouched = false
   
-  for i,v in ipairs(letters) do
-    if v.CorrectOrder == false then
-      if y <= 50 then
-        if x > letterCount * 50 then
-          if x <= letterCount * 50 + 50 then
-            correctLetterOrder = true
-            for i,v in ipairs(collectables) do
-              if v.CorrectOrder == false then
-                v.CorrectOrder = true
+  if gamestate == "easy" then
+    local letterTouched = false
+    for i,v in ipairs(letters) do
+      if v.CorrectOrder == false then
+        if y <= 50 then
+          if x > letterCount * 50 then
+            if x <= letterCount * 50 + 50 then
+              correctLetterOrder = true
+              for i,v in ipairs(collectables) do
+                if v.CorrectOrder == false then
+                  v.CorrectOrder = true
+                end
               end
+              table.remove(letters, i)
+              letterTouched = true
             end
-            table.remove(letters, i)
-            letterTouched = true
           end
         end
       end
     end
-  end
-  
-  if letterTouched == false then
-    if y < ((love.graphics.getHeight() / 3) * 2) then
-      if x < (love.graphics.getWidth() / 4) then -- move left
-        pMovingLeft = true
-        pMovingRight = false
-      elseif x >= ((love.graphics.getWidth() / 4) * 3) then -- move right
-        pMovingLeft = false
-        pMovingRight = true
-      else -- jump
-        pMovingLeft = false
-        pMovingRight = false
-        if pY == pGround - pHeight then
-          pState = 1
-          pHeightFromJump = 20
+    
+    if letterTouched == false then
+      if y < ((love.graphics.getHeight() / 3) * 2) then
+        if x < (love.graphics.getWidth() / 4) then -- move left
+          pMovingLeft = true
+          pMovingRight = false
+        elseif x >= ((love.graphics.getWidth() / 4) * 3) then -- move right
+          pMovingLeft = false
+          pMovingRight = true
+        else -- jump
+          pMovingLeft = false
+          pMovingRight = false
+          if pY == pGround - pHeight then
+            pState = 1
+            pHeightFromJump = 20
+          end
         end
-      end
-    else
-      if pState == 0 then -- fall through a platform
-        pHeightFromJump = -1
-        pY = pY - pHeightFromJump
-        pState = 2
+      else
+        if pState == 0 then -- fall through a platform
+          pHeightFromJump = -1
+          pY = pY - pHeightFromJump
+          pState = 2
+        end
       end
     end
   end
@@ -286,49 +292,84 @@ function love.mousereleased(x, y, button, isTouch)
 end
 
 function love.touchpressed( id, x, y, dx, dy, pressure )
-  local letterTouched = false
   
-  for i,v in ipairs(letters) do
-    if v.CorrectOrder == false then
-      if y * love.graphics.getHeight() <= yPressCheck then
-        if x * love.graphics.getWidth() > (letterOrder * 50 * scaleX) then
-          if x * love.graphics.getWidth() <= (letterOrder * 50 + 50) * scaleX then
-            correctLetterOrder = true
-            for i,v in ipairs(collectables) do
-              if v.CorrectOrder == false then
-                v.CorrectOrder = true
+  if hastouched == true then
+    if gamestate == "easy" then
+      local letterTouched = false
+      startCount = 1
+      objects.block1.body:applyAngularImpulse(-550)
+      objects.block1.body:applyLinearImpulse(-535, -2000)
+      objects.block2.body:applyAngularImpulse(555)
+      objects.block2.body:applyLinearImpulse(520, -2000)
+      for i,v in ipairs(letters) do
+        if v.CorrectOrder == false then
+          if y * love.graphics.getHeight() <= yPressCheck then
+            if x * love.graphics.getWidth() > (letterOrder * 50 * scaleX) then
+              if x * love.graphics.getWidth() <= (letterOrder * 50 + 50) * scaleX then
+                correctLetterOrder = true
+                for i,v in ipairs(collectables) do
+                  if v.CorrectOrder == false then
+                    v.CorrectOrder = true
+                  end
+                end
+                table.remove(letters, i)
+                letterTouched = true
               end
             end
-            table.remove(letters, i)
-            letterTouched = true
           end
         end
       end
-    end
-  end
-  
-  if letterTouched == false then
-    if (y * love.graphics.getHeight()) < ((love.graphics.getHeight() / 3) * 2) then
-      if (x * love.graphics.getWidth()) < (love.graphics.getWidth() / 4) then -- move left
-        pMovingLeft = true
-        pMovingRight = false
-      elseif (x * love.graphics.getWidth()) >= ((love.graphics.getWidth() / 4) * 3) then -- move right
-        pMovingLeft = false
-        pMovingRight = true
-      else -- jump
-        pMovingLeft = false
-        pMovingRight = false
-        if pY == pGround - pHeight then
-          pState = 1
-          pHeightFromJump = 20
+      
+      if letterTouched == false then
+        if (y * love.graphics.getHeight()) < ((love.graphics.getHeight() / 3) * 2) then
+          if (x * love.graphics.getWidth()) < (love.graphics.getWidth() / 4) then -- move left
+            pMovingLeft = true
+            pMovingRight = false
+          elseif (x * love.graphics.getWidth()) >= ((love.graphics.getWidth() / 4) * 3) then -- move right
+            pMovingLeft = false
+            pMovingRight = true
+          else -- jump
+            pMovingLeft = false
+            pMovingRight = false
+            if pY == pGround - pHeight then
+              pState = 1
+              pHeightFromJump = 20
+            end
+          end
+        else
+          if pState == 0 then -- fall through a platform
+            pHeightFromJump = -1
+            pY = pY - pHeightFromJump
+            pState = 2
+          end
         end
       end
-    else
-      if pState == 0 then -- fall through a platform
-        pHeightFromJump = -1
-        pY = pY - pHeightFromJump
-        pState = 2
-      end
+      hastouched =true
+    end 
+     
+    if gamestate == "menu" then
+      button_click(x * love.graphics.getWidth(),y * love.graphics.getHeight())
+      hastouched =true
+    end
+    
+    if gamestate == "scoreboard" then
+      sButton_click(x * love.graphics.getWidth(),y * love.graphics.getHeight())
+      hastouched =true
+    end
+      
+    if gamestate == "character" then
+      cButton_click(x * love.graphics.getWidth(),y * love.graphics.getHeight())
+      hastouched =true
+    end
+      
+    if gamestate == "levelSelect" then
+      dButton_click(x * love.graphics.getWidth(),y * love.graphics.getHeight())
+      hastouched =true
+    end
+    
+    if gamestate == "options" then
+      oButton_click(x * love.graphics.getWidth(),y * love.graphics.getHeight())
+      hastouched =true
     end
   end
 end
@@ -336,6 +377,7 @@ end
 function love.touchreleased( id, x, y, dx, dy, pressure )
   pMovingLeft = false
   pMovingRight = false
+  hastouched = false
 end
 
 function love.update(dt)
@@ -402,89 +444,89 @@ function love.update(dt)
 end
 
 function love.draw()
-  love.graphics.setNewFont(50)
-  for i,v in ipairs(platforms) do
-    love.graphics.draw(platformImage, v.X, v.Y, 0, spriteScalerX, spriteScalerY)
-  end
-  for i,v in ipairs(collectables) do
-    if v.CorrectOrder then
-      love.graphics.draw(collectableImage, v.X, v.Y, 0, spriteScalerX, spriteScalerY)
-      love.graphics.print(v.Letter, v.X, v.Y, 0, spriteScalerX, spriteScalerY)
-    end
-  end
-  for i,v in ipairs(letters) do
-    if v.CorrectOrder then
-      love.graphics.draw(collectableImage, (i - 1) * 50, 0, 0, spriteScalerX, spriteScalerY)
-    else
-      love.graphics.draw(incorrectLetterImage, (i - 1) * 50, 0, 0, spriteScalerX, spriteScalerY)
-    end
-    love.graphics.print(v.Letter, (i - 1) * 50, 0)
-  end
-  love.graphics.draw(pImage, pQuad, pX, pY)
-  
-  love.graphics.setNewFont(12)
-  
   if gamestate == "easy" then
-    love.graphics.print("controls: top left to move left. top middle", 0, 100)  -- controls
-    love.graphics.print("to jump. top right to move right. bottom to", 0, 120)
-    love.graphics.print("fall through platform.", 0, 140)
+    love.graphics.setFont(font_50)
+    for i,v in ipairs(platforms) do
+      love.graphics.draw(platformImage, v.X, v.Y, 0, spriteScalerX, spriteScalerY)
+    end
+    for i,v in ipairs(collectables) do
+      if v.CorrectOrder then
+        love.graphics.draw(collectableImage, v.X, v.Y, 0, spriteScalerX, spriteScalerY)
+        love.graphics.print(v.Letter, v.X, v.Y, 0, spriteScalerX, spriteScalerY)
+      end
+    end
+    for i,v in ipairs(letters) do
+      if v.CorrectOrder then
+        love.graphics.draw(collectableImage, (i - 1) * 50, 0, 0, spriteScalerX, spriteScalerY)
+      else
+        love.graphics.draw(incorrectLetterImage, (i - 1) * 50, 0, 0, spriteScalerX, spriteScalerY)
+      end
+      love.graphics.print(v.Letter, (i - 1) * 50, 0)
+    end
+    love.graphics.draw(pImage, pQuad, pX, pY)
+    
+    love.graphics.setFont(font_12)  
+    love.graphics.print("controls: top left to move left. top middle", 0, 100 * scaleY)  -- controls
+    love.graphics.print("to jump. top right to move right. bottom to", 0, 120 * scaleY)
+    love.graphics.print("fall through platform.", 0, 140 * scaleY)
   else
-    love.graphics.print("GAME COMPLETE", 100, 100) -- completion message
+    love.graphics.setFont(font_50)
+    love.graphics.print("GAME COMPLETE", 100 * scaleX, 100 * scaleY) -- completion message
     for i,v in ipairs(stars) do
-      love.graphics.draw(starImage, (i - 1) * 50, 200)
-      love.graphics.print("STAR", (i - 1) * 50, 200)
+      love.graphics.draw(starImage, (i - 1) * 50* scaleX, 200* scaleY, 0, spriteScalerX, spriteScalerY)
+      love.graphics.print("STAR", (i - 1) * 50* scaleX, 200* scaleY, 0, spriteScalerX, spriteScalerY)
     end
   end
   
   if gamestate == "intermediate" then
-    love.graphics.print("Not added yet ",10,10)
+    love.graphics.print("Not added yet ",10 * scaleX,10 * scaleY)
   end
   
   if gamestate == "advanced" then
-    love.graphics.print("Not added yet ",10,10)       
+    love.graphics.print("Not added yet ",10 * scaleX ,10 * scaleY)       
   end
       
   if gamestate == "menu" then
-    love.graphics.draw(placeholder, 0, 0)
-    animation:draw(titleSpritesheet, 15, 15)
+    love.graphics.draw(placeholder, 0, 0, 0, spriteScalerX, spriteScalerY)
+    animation:draw(titleSpritesheet, 15, 15, 0, spriteScalerX, spriteScalerY)
     button_draw()
   end
   
   if gamestate == "levelSelect" then
-    love.graphics.draw(placeholder, 0, 0)
+    love.graphics.draw(placeholder, 0, 0, 0, spriteScalerX, spriteScalerY)
     dButton_draw()
-    animation:draw(titleSpritesheet, 15, 15)
+    animation:draw(titleSpritesheet, 15, 15, 0, spriteScalerX, spriteScalerY)
     love.graphics.setColor(0,255,233)
     love.graphics.setFont(subtitlefont)
-    love.graphics.print("Select Difficulty", 45, 90)   
+    love.graphics.print("Select Difficulty", 45 * scaleX, 90 * scaleY)   
     love.graphics.setColor(255,255,255)
   end
   
   if gamestate == "scoreboard" then
-    love.graphics.draw(placeholder, 0, 0)
+    love.graphics.draw(placeholder, 0, 0, 0, spriteScalerX, spriteScalerY)
     sButton_draw()
-    animation:draw(titleSpritesheet, 15, 15)
+    animation:draw(titleSpritesheet, 15, 15, 0, spriteScalerX, spriteScalerY)
     love.graphics.setColor(0,255,12)
     love.graphics.setFont(subtitlefont)
-    love.graphics.print("Your High Scores", 50, 90)
+    love.graphics.print("Your High Scores", 50 * scaleX, 90 * scaleY)
     love.graphics.setColor(255,255,255)
   end
   
   if gamestate == "character" then
-    love.graphics.draw(placeholder, 0, 0)
+    love.graphics.draw(placeholder, 0, 0, 0, spriteScalerX, spriteScalerY)
     cButton_draw()
     love.graphics.setColor(255,0,255)
     love.graphics.setFont(subtitlefont)
-    love.graphics.print("Select your character", 20, 90)
+    love.graphics.print("Select your character", 20 *scaleX, 90 * scaleY)
     love.graphics.setColor(255,255,255)
-    animation:draw(titleSpritesheet, 15, 15)
+    animation:draw(titleSpritesheet, 15, 15, 0, spriteScalerX, spriteScalerY)
     love.graphics.setColor(255,255,255)
   end
     
   if gamestate == "options" then
     love.graphics.setFont(optionfont)
-    love.graphics.draw(placeholder, 0, 0)
-    animation:draw(titleSpritesheet, 15, 15)
+    love.graphics.draw(placeholder, 0, 0, 0, spriteScalerX, spriteScalerY)
+    animation:draw(titleSpritesheet, 15, 15, 0, spriteScalerX, spriteScalerY)
     oButton_draw()
     love.graphics.draw(checkbox, 185, 251)    
     sound_bars()
@@ -542,7 +584,7 @@ end
 
 function PlayerJump() -- function makes player rises after a jump input
   if pState == 1 then
-    pY = pY - pHeightFromJump
+    pY = pY - pHeightFromJump * scaleY
     pHeightFromJump = pHeightFromJump - 1
     if pHeightFromJump <= 0 then
       pState = 2
@@ -552,7 +594,7 @@ end
 
 function PlayerFall() -- function makes player fall after falling off a ledge or reaching the peak of it's jump and makes the player land
   if pState == 2 then
-    pY = pY - pHeightFromJump
+    pY = pY - pHeightFromJump * scaleY
     pHeightFromJump = pHeightFromJump - 1
     if pY >= pGround - pHeight then
       pHeightFromJump = 0
