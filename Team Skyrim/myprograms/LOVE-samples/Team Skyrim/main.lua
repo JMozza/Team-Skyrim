@@ -35,6 +35,10 @@ function love.load()
   checkbox = love.graphics.newImage("sprites/checkbox.png")
   tick = love.graphics.newImage("sprites/tick.png")
   tile = love.graphics.newImage("sprites/tile.png")
+  
+  --images for gamescreen
+  gamebackground = love.graphics.newImage("sprites/background/#BG - Copy.png")
+  letter = love.graphics.newImage("sprites/testletter.jpg")
 
   --Animation Variables
   grid = anim8.newGrid(240,56, titleSpritesheet:getWidth(), titleSpritesheet:getHeight())
@@ -86,27 +90,27 @@ function love.load()
   objects = {}
   
   objects.platform1 = {}
-  objects.platform1.body = love.physics.newBody(world, width/2+90, 331) 
+  objects.platform1.body = love.physics.newBody(world, width/2+103, 251) 
   objects.platform1.shape = love.physics.newRectangleShape(50, 1) --make a rectangle with a width of 650 and a height of 50
   objects.platform1.fixture = love.physics.newFixture(objects.platform1.body, objects.platform1.shape); --attach shape to body
   
   objects.platform2 = {}
-  objects.platform2.body = love.physics.newBody(world, 25, 430) 
+  objects.platform2.body = love.physics.newBody(world, 80, 140) 
   objects.platform2.shape = love.physics.newRectangleShape(50, 1) --make a rectangle with a width of 650 and a height of 50
   objects.platform2.fixture = love.physics.newFixture(objects.platform2.body, objects.platform2.shape); --attach shape to body
   
   objects.block1 = {}
-  objects.block1.body = love.physics.newBody(world, width/2+165, 50, "dynamic") --place the body in the center of the world and make it dynamic, so it can move around
+  objects.block1.body = love.physics.newBody(world, width/2+176, -20, "dynamic") --place the body in the center of the world and make it dynamic, so it can move around
   objects.block1.shape = love.physics.newRectangleShape(40, 40) --make a rectangle with a width of 650 and a height of 50
   objects.block1.fixture = love.physics.newFixture(objects.block1.body, objects.block1.shape, 1) -- Attach fixture to body and give it a density of 1.
-  objects.block1.fixture:setRestitution(0) --let the ball bounce
+  objects.block1.fixture:setRestitution(0) --bounce
   objects.block1.body:setMass(10)
   
   objects.block2 = {}
-  objects.block2.body = love.physics.newBody(world, -65, 80, "dynamic") --place the body in the center of the world and make it dynamic, so it can move around
+  objects.block2.body = love.physics.newBody(world, -10, -210, "dynamic") --place the body in the center of the world and make it dynamic, so it can move around
   objects.block2.shape = love.physics.newRectangleShape(40, 40) --make a rectangle with a width of 650 and a height of 50
   objects.block2.fixture = love.physics.newFixture(objects.block2.body, objects.block2.shape, 1) -- Attach fixture to body and give it a density of 1.
-  objects.block2.fixture:setRestitution(0) --let the ball bounce
+  objects.block2.fixture:setRestitution(0) --bounce
   objects.block2.body:setMass(10)
   --------------------------Physics--------------------------------
 -->>>>>>> origin/Physics
@@ -117,10 +121,12 @@ function love.load()
   -- variables for player
   pState = 0 -- 0 for standing, 1 for jumping, 2 for falling, add player state definitions here
   pSprite = 0 -- sprite from spritesheet player is on on current frame
+  pMovingState = 0 -- 0 for idle, 1 for walking left, 2 for walking right
+  pJumpingState = 0 --- 0 for left, 1 for right
   pSpeed = 3 * scaleX-- constant; player's speed
   pGround = love.graphics.getHeight() -- height of the ground the player is currently over
-  pWidth = 25 * scaleX -- constant; player's width
-  pHeight = 25 * scaleY -- constant; player's height
+  pWidth = 48 * scaleX -- constant; player's width
+  pHeight = 96 * scaleY -- constant; player's height
   pX = 0 -- player's x co-ordinate
   pY = pGround - pHeight -- player's y co-ordinate
   pDirection = 1 -- 0 for left, 1 for right
@@ -130,7 +136,14 @@ function love.load()
   pMovingLeft = false -- true if player is being instructed to move left
   pMovingRight = false -- true if player is being instructed to move right
   pFrames = 0 -- player's frame counter
-  pImage = love.graphics.newImage("sprites/Placeholder1.png")
+  pIdleImage = love.graphics.newImage("sprites/Characters/1___Idle.png")
+  pWrongImage = love.graphics.newImage("sprites/Characters/2___Wrong.png")
+  pCorrectImage = love.graphics.newImage("sprites/Characters/3___Correct.png")
+  pWalkingRightImage = love.graphics.newImage("sprites/Characters/4___WalkingRight.png")
+  pWalkingLeftImage = love.graphics.newImage("sprites/Characters/5___WalkingLeft.png")
+  pJumpingRightImage = love.graphics.newImage("sprites/Characters/6___JumpingRight.png")
+  pJumpingLeftImage = love.graphics.newImage("sprites/Characters/7___JumpingLeft.png")
+  pImage = pIdleImage -- current spritesheet in use
   pQuad = love.graphics.newQuad(0, 0, pWidth, pHeight, pImage:getWidth(), pImage:getHeight())
   
   -- variables for platforms
@@ -158,25 +171,53 @@ function love.load()
   --variables for collectables
   collectables = {} -- collectables on the screen
   collectableCount = 0 -- amount of collectables
-  collectableImage = love.graphics.newImage("sprites/Placeholder3.png")
+  AImage = love.graphics.newImage("sprites/Props/Letters/A.png")
+  BImage = love.graphics.newImage("sprites/Props/Letters/B.png")
+  CImage = love.graphics.newImage("sprites/Props/Letters/C.png")
+  DImage = love.graphics.newImage("sprites/Props/Letters/D.png")
+  EImage = love.graphics.newImage("sprites/Props/Letters/E.png")
+  FImage = love.graphics.newImage("sprites/Props/Letters/F.png")
+  GImage = love.graphics.newImage("sprites/Props/Letters/G.png")
+  HImage = love.graphics.newImage("sprites/Props/Letters/H.png")
+  IImage = love.graphics.newImage("sprites/Props/Letters/I.png")
+  JImage = love.graphics.newImage("sprites/Props/Letters/J.png")
+  KImage = love.graphics.newImage("sprites/Props/Letters/K.png")
+  LImage = love.graphics.newImage("sprites/Props/Letters/L.png")
+  MImage = love.graphics.newImage("sprites/Props/Letters/M.png")
+  NImage = love.graphics.newImage("sprites/Props/Letters/N.png")
+  OImage = love.graphics.newImage("sprites/Props/Letters/O.png")
+  PImage = love.graphics.newImage("sprites/Props/Letters/P.png")
+  QImage = love.graphics.newImage("sprites/Props/Letters/Q.png")
+  RImage = love.graphics.newImage("sprites/Props/Letters/R.png")
+  SImage = love.graphics.newImage("sprites/Props/Letters/S.png")
+  TImage = love.graphics.newImage("sprites/Props/Letters/T.png")
+  UImage = love.graphics.newImage("sprites/Props/Letters/U.png")
+  VImage = love.graphics.newImage("sprites/Props/Letters/V.png")
+  WImage = love.graphics.newImage("sprites/Props/Letters/W.png")
+  XImage = love.graphics.newImage("sprites/Props/Letters/X.png")
+  YImage = love.graphics.newImage("sprites/Props/Letters/Y.png")
+  ZImage = love.graphics.newImage("sprites/Props/Letters/Z.png")
   
   for i=0,2 do
     collectable = {} -- new collectable
-    collectable.Width = collectableImage:getWidth() * scaleX -- constant; collectable's width
-    collectable.Height = collectableImage:getHeight() * scaleY -- constant; collectable's height
+    collectable.Width = AImage:getWidth() * scaleX -- constant; collectable's width
+    collectable.Height = AImage:getHeight() * scaleY -- constant; collectable's height
     if i == 0 then
       collectable.X = 0 -- collectable's x co-ordinate
       collectable.Y = love.graphics.getHeight() / 1.263158 -- collectable's y co-ordinate
       collectable.Letter = "B" -- letter the collectable represents
+      collectable.Image = BImage -- image of the letter
       nextLetter = collectable.Letter -- the letter that should be collected next
     elseif i == 1 then
       collectable.X = love.graphics.getWidth() / 1.35 -- collectable's x co-ordinate
       collectable.Y = love.graphics.getHeight() / 2.086957 -- collectable's y co-ordinate
       collectable.Letter = "E" -- letter the collectable represents
+      collectable.Image = EImage -- image of the letter
     else
       collectable.X = love.graphics.getWidth() / 1.35 -- collectable's x co-ordinate
       collectable.Y = love.graphics.getHeight() / 1.1162 -- collectable's y co-ordinate
       collectable.Letter = "E" -- letter the collectable represents
+      collectable.Image = EImage -- image of the letter
     end
     collectable.CorrectOrder = true -- false if collectable has been collected in the wrong order
     table.insert(collectables, collectable)
@@ -427,6 +468,7 @@ function love.update(dt)
     PlayerMove()
     PlayerJump()
     PlayerFall()
+    PlayerSprite()
     CheckCollectables()
     CheckLeftWalls()
     CheckRightWalls()
@@ -434,7 +476,8 @@ function love.update(dt)
   
   -----------------Physics-------------
   if startCount == 1 then
-    world:update(dt) --this puts the world into motion
+    world:update(dt)
+     --this puts the world into motion
   end
   -----------------Physics-------------
   
@@ -445,23 +488,23 @@ end
 
 function love.draw()
   if gamestate == "easy" then
+    love.graphics.draw(gamebackground, 0, 0)
     love.graphics.setFont(font_50)
     for i,v in ipairs(platforms) do
       love.graphics.draw(platformImage, v.X, v.Y, 0, spriteScalerX, spriteScalerY)
     end
     for i,v in ipairs(collectables) do
       if v.CorrectOrder then
-        love.graphics.draw(collectableImage, v.X, v.Y, 0, spriteScalerX, spriteScalerY)
-        love.graphics.print(v.Letter, v.X, v.Y, 0, spriteScalerX, spriteScalerY)
+        love.graphics.draw(v.Image, v.X, v.Y, 0, spriteScalerX, spriteScalerY)
       end
     end
     for i,v in ipairs(letters) do
       if v.CorrectOrder then
-        love.graphics.draw(collectableImage, (i - 1) * 50, 0, 0, spriteScalerX, spriteScalerY)
+        love.graphics.draw(v.Image, (i - 1) * 50, 0, 0, spriteScalerX, spriteScalerY)
       else
         love.graphics.draw(incorrectLetterImage, (i - 1) * 50, 0, 0, spriteScalerX, spriteScalerY)
+        love.graphics.print(v.Letter, (i - 1) * 50, 0)
       end
-      love.graphics.print(v.Letter, (i - 1) * 50, 0)
     end
     love.graphics.draw(pImage, pQuad, pX, pY)
     
@@ -469,6 +512,13 @@ function love.draw()
     love.graphics.print("controls: top left to move left. top middle", 0, 100 * scaleY)  -- controls
     love.graphics.print("to jump. top right to move right. bottom to", 0, 120 * scaleY)
     love.graphics.print("fall through platform.", 0, 140 * scaleY)
+    love.graphics.draw(pImage, pQuad, pX, pY)
+  
+    love.graphics.setNewFont(12)
+    love.graphics.print("controls: top left to move left. top middle", 0, 100)  -- controls
+    love.graphics.print("to jump. top right to move right. bottom to", 0, 120)
+    love.graphics.print("fall through platform.", 0, 140)
+-->>>>>>> 73b2ec0ca57a94f1a298454075103be653b843ba
   else
     love.graphics.setFont(font_50)
     love.graphics.print("GAME COMPLETE", 100 * scaleX, 100 * scaleY) -- completion message
@@ -536,10 +586,12 @@ function love.draw()
   --love.graphics.polygon("line", objects.platform1.body:getWorldPoints(objects.platform1.shape:getPoints())) 
   --love.graphics.setColor(200, 200, 200)
   --love.graphics.polygon("line", objects.platform2.body:getWorldPoints(objects.platform2.shape:getPoints())) 
+  love.graphics.setColor(255, 0, 0)
+  --love.graphics.draw(letter, objects.block1.body:getWorldPoints(objects.block1.shape:getPoints()))
+  love.graphics.polygon("fill", objects.block1.body:getWorldPoints(objects.block1.shape:getPoints()))
+  love.graphics.setColor(0, 0, 255)
+  love.graphics.polygon("fill", objects.block2.body:getWorldPoints(objects.block2.shape:getPoints()))
   love.graphics.setColor(200, 200, 200)
-  love.graphics.polygon("line", objects.block1.body:getWorldPoints(objects.block1.shape:getPoints()))
-  love.graphics.setColor(200, 200, 200)
-  love.graphics.polygon("line", objects.block2.body:getWorldPoints(objects.block2.shape:getPoints()))
   -----------------Physics-------------
 end
 function CheckGround() -- function finds height of ground beneath the player and decides if the player has fallen off a platform
@@ -575,9 +627,11 @@ end
 
 function PlayerMove() -- function moves player left or right
   if pMovingLeft then
+    pDirection = 0
     pX = pX - pSpeed
   end
   if pMovingRight then
+    pDirection = 1
     pX = pX + pSpeed
   end
 end
@@ -604,6 +658,90 @@ function PlayerFall() -- function makes player fall after falling off a ledge or
   end
 end
 
+function PlayerSprite()
+  if pState == 0 then
+    if pMovingLeft then
+      if pMovingState ~= 1 then
+        pSprite = 0
+        pFrames = 0
+      end
+      pMovingState = 1
+      pFrames = pFrames + 1
+      
+      if pFrames >= 15 then
+        pFrames = 0
+        pSprite = pSprite + 1
+        if pSprite >= 4 then
+          pSprite = 0
+        end
+      end
+      
+      pImage = pWalkingLeftImage
+      pQuad = love.graphics.newQuad(pSprite * pWidth, 0, pWidth, pHeight, pImage:getWidth(), pImage:getHeight())
+    elseif pMovingRight then
+      if pMovingState ~= 2 then
+        pSprite = 0
+        pFrames = 0
+      end
+      pMovingState = 2
+      pFrames = pFrames + 1
+      
+      if pFrames >= 15 then
+        pFrames = 0
+        pSprite = pSprite + 1
+        if pSprite >= 4 then
+          pSprite = 0
+        end
+      end
+      
+      pImage = pWalkingRightImage
+      pQuad = love.graphics.newQuad(pSprite * pWidth, 0, pWidth, pHeight, pImage:getWidth(), pImage:getHeight())
+    else
+      pMovingState = 0
+      pImage = pIdleImage
+      pQuad = love.graphics.newQuad(0, 0, pWidth, pHeight, pImage:getWidth(), pImage:getHeight())
+    end
+  else
+    if pDirection == 0 then
+      if pJumpingState ~= 0 then
+        pSprite = 0
+        pFrames = 0
+      end
+      pJumpingState = 0
+      pFrames = pFrames + 1
+      
+      if pFrames >= 5 then
+        pFrames = 0
+        pSprite = pSprite + 1
+        if pSprite >= 8 then
+          pSprite = 0
+        end
+      end
+      
+      pImage = pJumpingLeftImage
+      pQuad = love.graphics.newQuad(pSprite * pWidth, 0, pWidth, pHeight, pImage:getWidth(), pImage:getHeight())
+    else
+      if pJumpingState ~= 1 then
+        pSprite = 0
+        pFrames = 0
+      end
+      pJumpingState = 1
+      pFrames = pFrames + 1
+      
+      if pFrames >= 5 then
+        pFrames = 0
+        pSprite = pSprite + 1
+        if pSprite >= 8 then
+          pSprite = 0
+        end
+      end
+      
+      pImage = pJumpingRightImage
+      pQuad = love.graphics.newQuad(pSprite * pWidth, 0, pWidth, pHeight, pImage:getWidth(), pImage:getHeight())
+    end
+  end
+end
+
 function CheckCollectables() -- function checks if any collectables have been collected
   if correctLetterOrder then -- collectables can only be collected if all letters have been collected in the correct order
     for i,v in ipairs(collectables) do
@@ -614,6 +752,7 @@ function CheckCollectables() -- function checks if any collectables have been co
         if v.Letter == nextLetter then
           table.remove(collectables, i)
           letter.CorrectOrder = true
+          letter.Image = v.Image
           letterCount = letterCount + 1
           collectableCount = collectableCount - 1
           
