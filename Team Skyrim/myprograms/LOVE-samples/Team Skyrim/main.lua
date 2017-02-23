@@ -198,7 +198,7 @@ function love.load()
   ZImage = love.graphics.newImage("sprites/Props/Letters/Z.png")
   
   -- different letter lengths
-  word = "DICK"
+  word = "DANIEL"
   wordLength = #word
   
   for i=0,wordLength-1 do
