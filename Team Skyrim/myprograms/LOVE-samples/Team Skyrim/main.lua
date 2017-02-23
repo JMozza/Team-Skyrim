@@ -200,14 +200,18 @@ function love.load()
   YImage = love.graphics.newImage("sprites/Props/Letters/Y.png")
   ZImage = love.graphics.newImage("sprites/Props/Letters/Z.png")
   
-  for i=0,2 do
+  -- different letter lengths
+  word = "BEE"
+  wordLength = #word
+  
+  for i=0,wordLength do
     collectable = {} -- new collectable
     collectable.Width = AImage:getWidth() * scaleX -- constant; collectable's width
     collectable.Height = AImage:getHeight() * scaleY -- constant; collectable's height
     if i == 0 then
       collectable.X = 0 -- collectable's x co-ordinate
       collectable.Y = love.graphics.getHeight() / 1.263158 -- collectable's y co-ordinate
-      collectable.Letter = "B" -- letter the collectable represents
+      collectable.Letter = word[i+1] -- letter the collectable represents
       collectable.Image = BImage -- image of the letter
       nextLetter = collectable.Letter -- the letter that should be collected next
     elseif i == 1 then
@@ -215,7 +219,7 @@ function love.load()
       collectable.Y = love.graphics.getHeight() / 2.086957 -- collectable's y co-ordinate
       collectable.Letter = "E" -- letter the collectable represents
       collectable.Image = EImage -- image of the letter
-    else
+    elseif i == 2 then
       collectable.X = love.graphics.getWidth() / 1.35 -- collectable's x co-ordinate
       collectable.Y = love.graphics.getHeight() / 1.1162 -- collectable's y co-ordinate
       collectable.Letter = "E" -- letter the collectable represents
