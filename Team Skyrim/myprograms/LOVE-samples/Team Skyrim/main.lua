@@ -37,7 +37,7 @@ function love.load()
   tile = love.graphics.newImage("sprites/tile.png")
   
   --images for gamescreen
-  gamebackground = love.graphics.newImage("sprites/background/#BG - Copy.png")
+  gamebackground = love.graphics.newImage("sprites/Background/BG.png")
   letter = love.graphics.newImage("sprites/testletter.jpg")
 
   --Animation Variables
@@ -206,7 +206,7 @@ function love.load()
     collectable.Height = AImage:getHeight() * scaleY -- constant; collectable's height
     if i == 0 then
       collectable.X = 0 -- collectable's x co-ordinate
-      collectable.Y = love.graphics.getHeight() / 1.263158 -- collectable's y co-ordinate
+      collectable.Y = love.graphics.getHeight() / 2 -- collectable's y co-ordinate
       collectable.Letter = "B" -- letter the collectable represents
       collectable.Image = BImage -- image of the letter
       nextLetter = collectable.Letter -- the letter that should be collected next
@@ -490,7 +490,7 @@ end
 
 function love.draw()
   if gamestate == "easy" then
-    love.graphics.draw(gamebackground, 0, 0)
+    love.graphics.draw(gamebackground, 0, 0, 0, spriteScalerX, spriteScalerY)
     love.graphics.setFont(font_50)
     for i,v in ipairs(platforms) do
       love.graphics.draw(platformImage, v.X, v.Y, 0, spriteScalerX, spriteScalerY)
@@ -507,20 +507,12 @@ function love.draw()
         love.graphics.draw(incorrectLetterImage, (i - 1) * 50, 0, 0, spriteScalerX, spriteScalerY)
         love.graphics.print(v.Letter, (i - 1) * 50, 0)
       end
-    end
-    love.graphics.draw(pImage, pQuad, pX, pY)
-    
+    end    
     love.graphics.setFont(font_12)  
     love.graphics.print("controls: top left to move left. top middle", 0, 100 * scaleY)  -- controls
     love.graphics.print("to jump. top right to move right. bottom to", 0, 120 * scaleY)
     love.graphics.print("fall through platform.", 0, 140 * scaleY)
-    love.graphics.draw(pImage, pQuad, pX, pY)
-  
-    love.graphics.setNewFont(12)
-    love.graphics.print("controls: top left to move left. top middle", 0, 100)  -- controls
-    love.graphics.print("to jump. top right to move right. bottom to", 0, 120)
-    love.graphics.print("fall through platform.", 0, 140)
--->>>>>>> 73b2ec0ca57a94f1a298454075103be653b843ba
+    love.graphics.draw(pImage, pQuad, pX, pY, 0, spriteScalerX, spriteScalerY)
   else
     love.graphics.setFont(font_50)
     love.graphics.print("GAME COMPLETE", 100 * scaleX, 100 * scaleY) -- completion message
