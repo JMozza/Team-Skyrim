@@ -8,6 +8,7 @@ require "cMenu" --Character Selection Menu
 require "sMenu" --Scoreboard Menu
 
 function love.load()
+  math.randomseed(os.time()) -- needed for platform generation
   gamestate = "menu"
   width = 270
   height = 480
@@ -202,10 +203,38 @@ function love.load()
   wordLength = #word
   
   for i=0,wordLength-1 do
+<<<<<<< HEAD
+=======
+    collectable = {} -- new collectable
+    collectable.Width = collectableImage:getWidth() -- constant; collectable's width
+    collectable.Height = collectableImage:getHeight() -- constant; collectable's height
+    widthGen(0, 200) -- set these to the start and end of the platforms
+    heightGen(0, 3)
+    collectable.X = random -- this calls a random function with the start and end x and y passed in above
+    collectable.Y =  love.graphics.getHeight() -- collectable's y co-ordinate
+    collectable.CorrectOrder = true -- false if collectable has been collected in the wrong order
+    table.insert(collectables, collectable)
+    collectableCount = collectableCount + 1 -- increment collectable count
+  end
+  
+  for i=0,wordLength -1 do
+>>>>>>> 90fb4fc9b14530f52ccfe206844bee42d39da5b0
     collectable = {} -- new collectable
     collectable.Width = AImage:getWidth() * scaleX -- constant; collectable's width
     collectable.Height = AImage:getHeight() * scaleY -- constant; collectable's height
     if i == 0 then
+<<<<<<< HEAD
+=======
+      collectable.X = 0 -- collectable's x co-ordinate
+
+      collectable.Y = love.graphics.getHeight() / 2 -- collectable's y co-ordinate
+      collectable.Letter = "B" -- letter the collectable represents
+
+      collectable.Y = love.graphics.getHeight() / 1.263158 -- collectable's y co-ordinate
+      collectable.Letter = word[i+1] -- letter the collectable represents
+
+      collectable.Image = BImage -- image of the letter
+>>>>>>> 90fb4fc9b14530f52ccfe206844bee42d39da5b0
       nextLetter = collectable.Letter -- the letter that should be collected next
     end
     collectable.X = 0 -- collectable's x co-ordinate
@@ -847,3 +876,11 @@ function CheckCollision(x1, y1, w1, h1, x2, y2, w2, h2) -- function performs a c
          y1 < y2 + h2 and
          y2 < y1 + h1
 end
+
+function heightGen(bottomLevel, toplevel) -- this function is used for the positions of the collectables upon level creation
+   random2 = math.random(bottomLevel, toplevel)
+  end
+
+  function widthGen(startWidth, endWidth) -- this function is used for the positions of the collectables upon level creation
+   random = math.random(startWidth, endWidth)
+  end
