@@ -127,6 +127,8 @@ function love.load()
   pGround = love.graphics.getHeight() -- height of the ground the player is currently over
   pWidth = 48 * scaleX -- constant; player's width
   pHeight = 96 * scaleY -- constant; player's height
+  pSpriteWidth = 48 -- constant; player's width for sprites from spritesheets
+  pSpriteHeight = 96 -- constant; player's height for sprites from spritesheets
   pX = 0 -- player's x co-ordinate
   pY = pGround - pHeight -- player's y co-ordinate
   pDirection = 1 -- 0 for left, 1 for right
@@ -144,7 +146,7 @@ function love.load()
   pJumpingRightImage = love.graphics.newImage("sprites/Characters/6___JumpingRight.png")
   pJumpingLeftImage = love.graphics.newImage("sprites/Characters/7___JumpingLeft.png")
   pImage = pIdleImage -- current spritesheet in use
-  pQuad = love.graphics.newQuad(0, 0, pWidth, pHeight, pImage:getWidth(), pImage:getHeight())
+  pQuad = love.graphics.newQuad(0, 0, pSpriteWidth, pSpriteHeight, pImage:getWidth(), pImage:getHeight())
   
   -- variables for platforms
   platforms = {}
@@ -677,7 +679,7 @@ function PlayerSprite()
       end
       
       pImage = pWalkingLeftImage
-      pQuad = love.graphics.newQuad(pSprite * pWidth, 0, pWidth, pHeight, pImage:getWidth(), pImage:getHeight())
+      pQuad = love.graphics.newQuad(pSprite * pSpriteWidth, 0, pSpriteWidth, pSpriteHeight, pImage:getWidth(), pImage:getHeight())
     elseif pMovingRight then
       if pMovingState ~= 2 then
         pSprite = 0
@@ -695,11 +697,11 @@ function PlayerSprite()
       end
       
       pImage = pWalkingRightImage
-      pQuad = love.graphics.newQuad(pSprite * pWidth, 0, pWidth, pHeight, pImage:getWidth(), pImage:getHeight())
+      pQuad = love.graphics.newQuad(pSprite * pSpriteWidth, 0, pSpriteWidth, pSpriteHeight, pImage:getWidth(), pImage:getHeight())
     else
       pMovingState = 0
       pImage = pIdleImage
-      pQuad = love.graphics.newQuad(0, 0, pWidth, pHeight, pImage:getWidth(), pImage:getHeight())
+      pQuad = love.graphics.newQuad(0, 0, pSpriteWidth, pSpriteHeight, pImage:getWidth(), pImage:getHeight())
     end
   else
     if pDirection == 0 then
@@ -719,7 +721,7 @@ function PlayerSprite()
       end
       
       pImage = pJumpingLeftImage
-      pQuad = love.graphics.newQuad(pSprite * pWidth, 0, pWidth, pHeight, pImage:getWidth(), pImage:getHeight())
+      pQuad = love.graphics.newQuad(pSprite * pSpriteWidth, 0, pSpriteWidth, pSpriteHeight, pImage:getWidth(), pImage:getHeight())
     else
       if pJumpingState ~= 1 then
         pSprite = 0
@@ -737,7 +739,7 @@ function PlayerSprite()
       end
       
       pImage = pJumpingRightImage
-      pQuad = love.graphics.newQuad(pSprite * pWidth, 0, pWidth, pHeight, pImage:getWidth(), pImage:getHeight())
+      pQuad = love.graphics.newQuad(pSprite * pSpriteWidth, 0, pSpriteWidth, pSpriteHeight, pImage:getWidth(), pImage:getHeight())
     end
   end
 end
