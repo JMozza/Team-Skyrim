@@ -20,7 +20,6 @@ function love.load()
     scaleY = 1
   end
  
---<<<<<<< HEAD
   --fonts
   font = love.graphics.newFont("fonts/goodd.ttf", 28 * scaleX)
   optionfont = love.graphics.newFont("fonts/goodd.ttf", 12 * scaleX)
@@ -28,7 +27,6 @@ function love.load()
   font_12 = love.graphics.newFont(12* scaleX)
   font_50 = love.graphics.newFont(50)
   
- 
   --images for menu
   titleSpritesheet = love.graphics.newImage("sprites/TitleAnimation.png")
   placeholder = love.graphics.newImage("sprites/placeholderTitle.png")
@@ -82,7 +80,6 @@ function love.load()
   v_music = 1
   v_effects = 1
  
---=======
   --------------------------Physics--------------------------------
   love.physics.setMeter(64)
   world = love.physics.newWorld(0, 9.81*64, true)
@@ -113,8 +110,8 @@ function love.load()
   objects.block2.fixture:setRestitution(0) --bounce
   objects.block2.body:setMass(10)
   --------------------------Physics--------------------------------
--->>>>>>> origin/Physics
- -- variables for game
+  
+  -- variables for game
   --gameState = 1 -- 0 for main menu, 1 for in a game mode, 2 for level completion, add game state definitions here
   gameMode = 0 -- 0 for english, 1 for maths, 2 for science
   
@@ -201,36 +198,79 @@ function love.load()
   ZImage = love.graphics.newImage("sprites/Props/Letters/Z.png")
   
   -- different letter lengths
-  word = "BEE"
+  word = "DICKHEAD"
   wordLength = #word
   
-  for i=0,wordLength do
+  for i=0,wordLength-1 do
     collectable = {} -- new collectable
     collectable.Width = AImage:getWidth() * scaleX -- constant; collectable's width
     collectable.Height = AImage:getHeight() * scaleY -- constant; collectable's height
     if i == 0 then
-      collectable.X = 0 -- collectable's x co-ordinate
-<<<<<<< HEAD
-      collectable.Y = love.graphics.getHeight() / 2 -- collectable's y co-ordinate
-      collectable.Letter = "B" -- letter the collectable represents
-=======
-      collectable.Y = love.graphics.getHeight() / 1.263158 -- collectable's y co-ordinate
-      collectable.Letter = word[i+1] -- letter the collectable represents
->>>>>>> 8c4f93142b365d0f0f411b352bff2486171f8e7d
-      collectable.Image = BImage -- image of the letter
       nextLetter = collectable.Letter -- the letter that should be collected next
-    elseif i == 1 then
-      collectable.X = love.graphics.getWidth() / 1.35 -- collectable's x co-ordinate
-      collectable.Y = love.graphics.getHeight() / 2.086957 -- collectable's y co-ordinate
-      collectable.Letter = "E" -- letter the collectable represents
-      collectable.Image = EImage -- image of the letter
-    elseif i == 2 then
-      collectable.X = love.graphics.getWidth() / 1.35 -- collectable's x co-ordinate
-      collectable.Y = love.graphics.getHeight() / 1.1162 -- collectable's y co-ordinate
-      collectable.Letter = "E" -- letter the collectable represents
-      collectable.Image = EImage -- image of the letter
     end
+    collectable.X = 0 -- collectable's x co-ordinate
+    collectable.Y = love.graphics.getHeight() / 2 -- collectable's y co-ordinate
+    --collectable.X = love.graphics.getWidth() / 1.35 -- collectable's x co-ordinate
+    --collectable.Y = love.graphics.getHeight() / 2.086957 -- collectable's y co-ordinate
+    --collectable.X = love.graphics.getWidth() / 1.35 -- collectable's x co-ordinate
+    --collectable.Y = love.graphics.getHeight() / 1.1162 -- collectable's y co-ordinate
+    collectable.Letter = word.sub(word,i+1,i+1) -- letter the collectable represents
     collectable.CorrectOrder = true -- false if collectable has been collected in the wrong order
+    
+    if collectable.Letter == "A" then
+      collectable.Image = AImage -- image of the letter
+    elseif collectable.Letter == "B" then
+      collectable.Image = BImage -- image of the letter
+    elseif collectable.Letter == "C" then
+      collectable.Image = CImage -- image of the letter
+    elseif collectable.Letter == "D" then
+      collectable.Image = DImage -- image of the letter
+    elseif collectable.Letter == "E" then
+      collectable.Image = EImage -- image of the letter
+    elseif collectable.Letter == "F" then
+      collectable.Image = FImage -- image of the letter
+    elseif collectable.Letter == "G" then
+      collectable.Image = GImage -- image of the letter
+    elseif collectable.Letter == "H" then
+      collectable.Image = HImage -- image of the letter
+    elseif collectable.Letter == "I" then
+      collectable.Image = IImage -- image of the letter
+    elseif collectable.Letter == "J" then
+      collectable.Image = JImage -- image of the letter
+    elseif collectable.Letter == "K" then
+      collectable.Image = KImage -- image of the letter
+    elseif collectable.Letter == "L" then
+      collectable.Image = LImage -- image of the letter
+    elseif collectable.Letter == "M" then
+      collectable.Image = MImage -- image of the letter
+    elseif collectable.Letter == "N" then
+      collectable.Image = NImage -- image of the letter
+    elseif collectable.Letter == "O" then
+      collectable.Image = OImage -- image of the letter
+    elseif collectable.Letter == "P" then
+      collectable.Image = PImage -- image of the letter
+    elseif collectable.Letter == "Q" then
+      collectable.Image = QImage -- image of the letter
+    elseif collectable.Letter == "R" then
+      collectable.Image = RImage -- image of the letter
+    elseif collectable.Letter == "S" then
+      collectable.Image = SImage -- image of the letter
+    elseif collectable.Letter == "T" then
+      collectable.Image = TImage -- image of the letter
+    elseif collectable.Letter == "U" then
+      collectable.Image = UImage -- image of the letter
+    elseif collectable.Letter == "V" then
+      collectable.Image = VImage -- image of the letter
+    elseif collectable.Letter == "W" then
+      collectable.Image = WImage -- image of the letter
+    elseif collectable.Letter == "X" then
+      collectable.Image = XImage -- image of the letter
+    elseif collectable.Letter == "Y" then
+      collectable.Image = YImage -- image of the letter
+    elseif collectable.Letter == "Z" then
+      collectable.Image = ZImage -- image of the letter
+    end
+    
     table.insert(collectables, collectable)
     collectableCount = collectableCount + 1 -- increment collectable count
   end
@@ -269,7 +309,6 @@ function love.keypressed(key)
 end
 
 function love.mousepressed(x, y, button, isTouch)
-  
   if gamestate == "easy" then
     local letterTouched = false
     for i,v in ipairs(letters) do
@@ -344,7 +383,6 @@ function love.mousereleased(x, y, button, isTouch)
 end
 
 function love.touchpressed( id, x, y, dx, dy, pressure )
-  
   if hastouched == true then
     if gamestate == "easy" then
       local letterTouched = false
@@ -433,7 +471,6 @@ function love.touchreleased( id, x, y, dx, dy, pressure )
 end
 
 function love.update(dt)
-  
   mousex = love.mouse.getX()
   mousey = love.mouse.getY()
   
@@ -597,6 +634,7 @@ function love.draw()
   love.graphics.setColor(200, 200, 200)
   -----------------Physics-------------
 end
+
 function CheckGround() -- function finds height of ground beneath the player and decides if the player has fallen off a platform
   for i,v in ipairs(platforms) do
     if pX > v.X - pWidth then
@@ -661,7 +699,7 @@ function PlayerFall() -- function makes player fall after falling off a ledge or
   end
 end
 
-function PlayerSprite()
+function PlayerSprite() -- animate the player using the spritesheets
   if pState == 0 then
     if pMovingLeft then
       if pMovingState ~= 1 then
