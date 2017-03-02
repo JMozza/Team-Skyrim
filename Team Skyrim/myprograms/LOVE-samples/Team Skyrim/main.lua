@@ -208,13 +208,10 @@ function love.load()
     widthGen(0, 200) -- set these to the start and end of the platforms
     heightGen(0, 3)
     if i == 0 then
-<<<<<<< HEAD
       collectable.X = 0 -- collectable's x co-ordinate
       collectable.Y = love.graphics.getHeight() / 2 -- collectable's y co-ordinate
       collectable.Letter = "B" -- letter the collectable represents
       collectable.Image = BImage -- image of the letter
-=======
->>>>>>> origin/Physics
       nextLetter = collectable.Letter -- the letter that should be collected next
     end
     collectable.X = random -- this calls a random function with the start and end x and y passed in above
@@ -558,27 +555,13 @@ function love.draw()
         love.graphics.draw(incorrectLetterImage, (i - 1) * 50, 0, 0, spriteScalerX, spriteScalerY)
         love.graphics.print(v.Letter, (i - 1) * 50, 0)
       end
-<<<<<<< HEAD
     end
-    love.graphics.draw(pImage, pQuad, pX, pY, 0, spriteScalerX, spriteScalerY)
-    
-=======
-    end    
->>>>>>> origin/Physics
-    love.graphics.setFont(font_12)  
-    love.graphics.print("controls: top left to move left. top middle", 0, 100 * scaleY)  -- controls
-    love.graphics.print("to jump. top right to move right. bottom to", 0, 120 * scaleY)
-    love.graphics.print("fall through platform.", 0, 140 * scaleY)
-    love.graphics.draw(pImage, pQuad, pX, pY, 0, spriteScalerX, spriteScalerY)
-<<<<<<< HEAD
-  
+    love.graphics.draw(pImage, pQuad, pX, pY, 0, spriteScalerX, spriteScalerY)   
+ 
     love.graphics.setNewFont(12)
     love.graphics.print("controls: top left to move left. top middle", 0, 100)  -- controls
     love.graphics.print("to jump. top right to move right. bottom to", 0, 120)
     love.graphics.print("fall through platform.", 0, 140)
--->>>>>>> 73b2ec0ca57a94f1a298454075103be653b843ba
-=======
->>>>>>> origin/Physics
   else
     love.graphics.setFont(font_50)
     love.graphics.print("GAME COMPLETE", 100 * scaleX, 100 * scaleY) -- completion message
