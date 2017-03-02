@@ -143,7 +143,7 @@ function love.load()
   platforms = {}
   platformImage = love.graphics.newImage("sprites/Placeholder2.png")
   
-  for i=0,2 do
+  for i = 0, 2 do
     platform = {} -- new platform
     platform.Width = platformImage:getWidth() * scaleX-- constant; platform's width
     platform.Height = platformImage:getHeight() * scaleY-- constant; platform's height
@@ -163,7 +163,6 @@ function love.load()
   
   --variables for collectables
   collectables = {} -- collectables on the screen
-  collectableCount = 0 -- amount of collectables
   AImage = love.graphics.newImage("sprites/Props/Letters/A.png")
   BImage = love.graphics.newImage("sprites/Props/Letters/B.png")
   CImage = love.graphics.newImage("sprites/Props/Letters/C.png")
@@ -192,25 +191,27 @@ function love.load()
   ZImage = love.graphics.newImage("sprites/Props/Letters/Z.png")
   
   -- different letter lengths
-  word = "DANIEL"
-  wordLength = #word
+  word = "DAN"
+  collectableCount = #word
   
-  for i=0,wordLength-1 do
+  for i = 1, collectableCount do
     collectable = {} -- new collectable
     collectable.Width = AImage:getWidth() * scaleX -- constant; collectable's width
     collectable.Height = AImage:getHeight() * scaleY -- constant; collectable's height
     widthGen(0, 200) -- set these to the start and end of the platforms
-    heightGen(0, 3)
-    if i == 0 then
-      collectable.X = 0 -- collectable's x co-ordinate
-      collectable.Y = love.graphics.getHeight() / 2 -- collectable's y co-ordinate
-      collectable.Letter = "B" -- letter the collectable represents
-      collectable.Image = BImage -- image of the letter
+    heightGen(0, 200)
+    collectable.X = random -- this calls a random function with the start and end x and y passed in above
+    collectable.Y =  100 -- collectable's y co-ordinate
+    collectable.Letter = word.sub(word, i, i) -- letter the collectable represents
+    if i == 1 then
       nextLetter = collectable.Letter -- the letter that should be collected next
     end
+<<<<<<< HEAD
     collectable.X = random -- this calls a random function with the start and end x and y passed in above
     collectable.Y =  heightGen(1, 3)--love.graphics.getHeight() -- collectable's y co-ordinate
     collectable.Letter = word.sub(word,i+1,i+1) -- letter the collectable represents
+=======
+>>>>>>> origin/Sprites-and-Animations
     collectable.CorrectOrder = true -- false if collectable has been collected in the wrong order
     
     if collectable.Letter == "A" then
@@ -268,7 +269,6 @@ function love.load()
     end
     
     table.insert(collectables, collectable)
-    collectableCount = collectableCount + 1 -- increment collectable count
   end
   
   -- variables for collected letters
@@ -284,6 +284,21 @@ function love.load()
     table.insert(stars, star)
   end
   starImage = love.graphics.newImage("sprites/Placeholder5.png")
+  
+  -- variables for coins
+  coins = {} -- coins collected since the game started
+  coinCount = 5 -- amount of coins in the stage
+  stageCoinsCollected = 0 -- amount of coins the player has collected in the stage
+  gameCoinsCollected = 0 -- amount of coins the player has collected throughout the game
+  coinImage = love.graphics.newImage("sprites/checkbox.png")
+  for i=1,coinCount do
+    coin = {} -- new coin
+    coin.Width = coinImage:getWidth() * scaleX-- constant; coin's width
+    coin.Height = coinImage:getHeight() * scaleY-- constant; coin's height
+    coin.X = (i-1) * 10 + 200
+    coin.Y = 200
+    table.insert(coins, coin)
+  end
   
   spriteScalerX = 1 * scaleX
   spriteScalerY = 1 * scaleY
@@ -390,8 +405,8 @@ function love.touchpressed( id, x, y, dx, dy, pressure )
       for i,v in ipairs(letters) do
         if v.CorrectOrder == false then
           if y * love.graphics.getHeight() <= yPressCheck then
-            if x * love.graphics.getWidth() > (letterOrder * (50 * scaleX) * scaleX) then
-              if x * love.graphics.getWidth() <= ((letterOrder * 50 + 50) * scaleX) * scaleX then
+            if x * love.graphics.getWidth() > (letterOrder * 50 * scaleX) then
+              if x * love.graphics.getWidth() <= (letterOrder * 50 + 50) * scaleX then
                 correctLetterOrder = true
                 for i,v in ipairs(collectables) do
                   if v.CorrectOrder == false then
@@ -530,6 +545,9 @@ function love.draw()
         love.graphics.draw(v.Image, v.X, v.Y, 0, spriteScalerX, spriteScalerY)
       end
     end
+    for i,v in ipairs(coins) do
+      love.graphics.draw(coinImage, v.X, v.Y, 0, spriteScalerX, spriteScalerY)
+    end
     for i,v in ipairs(letters) do
       if v.CorrectOrder then
         love.graphics.draw(v.Image, (i - 1) * 50, 0, 0, spriteScalerX, spriteScalerY)
@@ -537,6 +555,7 @@ function love.draw()
         love.graphics.draw(incorrectLetterImage, (i - 1) * 50, 0, 0, spriteScalerX, spriteScalerY)
         love.graphics.print(v.Letter, (i - 1) * 50, 0)
       end
+<<<<<<< HEAD
     end
     love.graphics.draw(pImage, pQuad, pX, pY, 0, spriteScalerX, spriteScalerY)   
  
@@ -549,9 +568,19 @@ function love.draw()
     love.graphics.draw(BImage, objects.block1.body:getX() - 25, objects.block1.body:getY() - 25)
     
     love.graphics.draw(BImage, objects.block2.body:getX() - 25, objects.block2.body:getY() - 25)
+=======
+    end    
+    love.graphics.setFont(font_12)  
+    love.graphics.print("controls: top left to move left. top middle", 0, 100 * scaleY)  -- controls
+    love.graphics.print("to jump. top right to move right. bottom to", 0, 120 * scaleY)
+    love.graphics.print("fall through platform.", 0, 140 * scaleY)
+    love.graphics.draw(pImage, pQuad, pX, pY, 0, spriteScalerX, spriteScalerY)
+>>>>>>> origin/Sprites-and-Animations
   else
     love.graphics.setFont(font_50)
     love.graphics.print("GAME COMPLETE", 100 * scaleX, 100 * scaleY) -- completion message
+    love.graphics.print("STAGE COIN COUNT: "..stageCoinsCollected, 150 * scaleX, 150 * scaleY)
+    love.graphics.print("GAME COIN COUNT: "..gameCoinsCollected, 150 * scaleX, 150 * scaleY)
     for i,v in ipairs(stars) do
       love.graphics.draw(starImage, (i - 1) * 50* scaleX, 200* scaleY, 0, spriteScalerX, spriteScalerY)
       love.graphics.print("STAR", (i - 1) * 50* scaleX, 200* scaleY, 0, spriteScalerX, spriteScalerY)
@@ -762,13 +791,13 @@ function CheckCollectables() -- function checks if any collectables have been co
       if hitTest then
         letter = {}
         letter.Letter = v.Letter
-        if v.Letter == nextLetter then
+        if letter.Letter == nextLetter then
           table.remove(collectables, i)
           letter.CorrectOrder = true
           letter.Image = v.Image
           letterCount = letterCount + 1
           collectableCount = collectableCount - 1
-          
+          test = test + 1
           if next(collectables) ~= nil then
             local first = true
             for i,v in ipairs(collectables) do
@@ -787,6 +816,16 @@ function CheckCollectables() -- function checks if any collectables have been co
         end
         table.insert(letters, letter)
       end
+    end
+  end
+  
+  -- collect coins
+  for i,v in ipairs(coins) do
+    local hitTest = CheckCollision(v.X, v.Y, v.Width, v.Height, pX, pY, pWidth, pHeight)
+    if hitTest then
+      stageCoinsCollected = stageCoinsCollected + 1
+      gameCoinsCollected = gameCoinsCollected + 1
+      table.remove(coins, i)
     end
   end
 end
@@ -820,6 +859,7 @@ function CheckCollision(x1, y1, w1, h1, x2, y2, w2, h2) -- function performs a c
          y2 < y1 + h1
 end
 
+<<<<<<< HEAD
 function heightGen(bottomLevel, toplevel) -- this function is used for the positions of the collectables upon level creation
    random2 = math.random(bottomLevel, toplevel)
    
@@ -833,8 +873,12 @@ function heightGen(bottomLevel, toplevel) -- this function is used for the posit
       colY = 150
     end
     return colY
+=======
+function widthGen(startWidth, endWidth) -- this function is used for the positions of the collectables upon level creation
+  random = math.random(startWidth, endWidth)
+>>>>>>> origin/Sprites-and-Animations
 end
 
-function widthGen(startWidth, endWidth) -- this function is used for the positions of the collectables upon level creation
-   random = math.random(startWidth, endWidth)
+function heightGen(bottomLevel, toplevel) -- this function is used for the positions of the collectables upon level creation
+  random2 = math.random(bottomLevel, toplevel)
 end
