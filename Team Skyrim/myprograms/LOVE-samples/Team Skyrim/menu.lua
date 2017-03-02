@@ -27,7 +27,12 @@ function button_click(x,y)
       y > v.y and
       y < v.y + font:getHeight() then
         if v.id == "1" then
-          gamestate = "levelSelect"
+          gamestate = "easy"
+          startCount = 1
+          objects.block1.body:applyAngularImpulse(-550)
+          objects.block1.body:applyLinearImpulse(-535, -2000)
+          objects.block2.body:applyAngularImpulse(555)
+          objects.block2.body:applyLinearImpulse(520, -2000)
         end       
         if v.id == "2" then
           gamestate = "character"
