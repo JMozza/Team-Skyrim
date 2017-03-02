@@ -8,6 +8,7 @@ require "cMenu" --Character Selection Menu
 require "sMenu" --Scoreboard Menu
 
 function love.load()
+  math.randomseed(os.time()) -- needed for random generation
   gamestate = "menu"
   width = 270
   height = 480
@@ -215,7 +216,7 @@ function love.load()
       nextLetter = collectable.Letter -- the letter that should be collected next
     end
     collectable.X = random -- this calls a random function with the start and end x and y passed in above
-    collectable.Y =  0--love.graphics.getHeight() -- collectable's y co-ordinate
+    collectable.Y =  heightGen(1, 3)--love.graphics.getHeight() -- collectable's y co-ordinate
     collectable.Letter = word.sub(word,i+1,i+1) -- letter the collectable represents
     collectable.CorrectOrder = true -- false if collectable has been collected in the wrong order
     
@@ -859,6 +860,17 @@ end
 
 function heightGen(bottomLevel, toplevel) -- this function is used for the positions of the collectables upon level creation
    random2 = math.random(bottomLevel, toplevel)
+   
+   if random2 == 1 then
+      colY = 50
+    end
+    if random2 == 2 then
+      colY = 100
+    end
+    if random2 == 3 then
+      colY = 150
+    end
+    return colY
 end
 
 function widthGen(startWidth, endWidth) -- this function is used for the positions of the collectables upon level creation
