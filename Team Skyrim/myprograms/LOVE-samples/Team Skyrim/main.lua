@@ -206,12 +206,9 @@ function love.load()
     if i == 1 then
       nextLetter = collectable.Letter -- the letter that should be collected next
     end
-<<<<<<< HEAD
     collectable.X = random -- this calls a random function with the start and end x and y passed in above
     collectable.Y =  heightGen(1, 3)--love.graphics.getHeight() -- collectable's y co-ordinate
     collectable.Letter = word.sub(word,i+1,i+1) -- letter the collectable represents
-=======
->>>>>>> origin/Sprites-and-Animations
     collectable.CorrectOrder = true -- false if collectable has been collected in the wrong order
     
     if collectable.Letter == "A" then
@@ -541,7 +538,7 @@ function love.draw()
       love.graphics.draw(platformImage, v.X, v.Y, 0, spriteScalerX, spriteScalerY)
     end
     for i,v in ipairs(collectables) do
-      if v.CorrectOrder then
+      if v.collectables then
         love.graphics.draw(v.Image, v.X, v.Y, 0, spriteScalerX, spriteScalerY)
       end
     end
@@ -555,7 +552,6 @@ function love.draw()
         love.graphics.draw(incorrectLetterImage, (i - 1) * 50, 0, 0, spriteScalerX, spriteScalerY)
         love.graphics.print(v.Letter, (i - 1) * 50, 0)
       end
-<<<<<<< HEAD
     end
     love.graphics.draw(pImage, pQuad, pX, pY, 0, spriteScalerX, spriteScalerY)   
  
@@ -567,15 +563,12 @@ function love.draw()
     
     love.graphics.draw(BImage, objects.block1.body:getX() - 25, objects.block1.body:getY() - 25)
     
-    love.graphics.draw(BImage, objects.block2.body:getX() - 25, objects.block2.body:getY() - 25)
-=======
-    end    
+    love.graphics.draw(BImage, objects.block2.body:getX() - 25, objects.block2.body:getY() - 25) 
     love.graphics.setFont(font_12)  
     love.graphics.print("controls: top left to move left. top middle", 0, 100 * scaleY)  -- controls
     love.graphics.print("to jump. top right to move right. bottom to", 0, 120 * scaleY)
     love.graphics.print("fall through platform.", 0, 140 * scaleY)
     love.graphics.draw(pImage, pQuad, pX, pY, 0, spriteScalerX, spriteScalerY)
->>>>>>> origin/Sprites-and-Animations
   else
     love.graphics.setFont(font_50)
     love.graphics.print("GAME COMPLETE", 100 * scaleX, 100 * scaleY) -- completion message
@@ -859,7 +852,6 @@ function CheckCollision(x1, y1, w1, h1, x2, y2, w2, h2) -- function performs a c
          y2 < y1 + h1
 end
 
-<<<<<<< HEAD
 function heightGen(bottomLevel, toplevel) -- this function is used for the positions of the collectables upon level creation
    random2 = math.random(bottomLevel, toplevel)
    
@@ -873,10 +865,9 @@ function heightGen(bottomLevel, toplevel) -- this function is used for the posit
       colY = 150
     end
     return colY
-=======
+end
 function widthGen(startWidth, endWidth) -- this function is used for the positions of the collectables upon level creation
   random = math.random(startWidth, endWidth)
->>>>>>> origin/Sprites-and-Animations
 end
 
 function heightGen(bottomLevel, toplevel) -- this function is used for the positions of the collectables upon level creation
