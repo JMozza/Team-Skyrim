@@ -285,6 +285,21 @@ function love.load()
   end
   starImage = love.graphics.newImage("sprites/Placeholder5.png")
   
+  -- variables for coins
+  coins = {} -- coins collected since the game started
+  coinCount = 5 -- amount of coins in the stage
+  stageCoinsCollected = 0 -- amount of coins the player has collected in the stage
+  gameCoinsCollected = 0 -- amount of coins the player has collected throughout the game
+  coinImage = love.graphics.newImage("sprites/checkbox.png")
+  for i=1,coinCount do
+    coin = {} -- new coin
+    coin.Width = coinImage:getWidth() * scaleX-- constant; coin's width
+    coin.Height = coinImage:getHeight() * scaleY-- constant; coin's height
+    coin.X = (i-1) * 10 + 200
+    coin.Y = 200
+    table.insert(coins, coin)
+  end
+  
   spriteScalerX = 1 * scaleX
   spriteScalerY = 1 * scaleY
   yPressCheck = 50 * scaleY
@@ -292,8 +307,6 @@ function love.load()
   hastouched = false
   
   love.window.setMode(width * scaleX, height * scaleY)
-  
-  test = 0
 end
 
 function love.keypressed(key)
@@ -544,6 +557,9 @@ function love.draw()
         love.graphics.draw(v.Image, v.X, v.Y, 0, spriteScalerX, spriteScalerY)
       end
     end
+    for i,v in ipairs(coins) do
+      love.graphics.draw(coinImage, v.X, v.Y, 0, spriteScalerX, spriteScalerY)
+    end
     for i,v in ipairs(letters) do
       if v.CorrectOrder then
         love.graphics.draw(v.Image, (i - 1) * 50, 0, 0, spriteScalerX, spriteScalerY)
@@ -560,6 +576,8 @@ function love.draw()
   else
     love.graphics.setFont(font_50)
     love.graphics.print("GAME COMPLETE", 100 * scaleX, 100 * scaleY) -- completion message
+    love.graphics.print("STAGE COIN COUNT: "..stageCoinsCollected, 150 * scaleX, 150 * scaleY)
+    love.graphics.print("GAME COIN COUNT: "..gameCoinsCollected, 150 * scaleX, 150 * scaleY)
     for i,v in ipairs(stars) do
       love.graphics.draw(starImage, (i - 1) * 50* scaleX, 200* scaleY, 0, spriteScalerX, spriteScalerY)
       love.graphics.print("STAR", (i - 1) * 50* scaleX, 200* scaleY, 0, spriteScalerX, spriteScalerY)
@@ -631,12 +649,6 @@ function love.draw()
   love.graphics.polygon("fill", objects.block2.body:getWorldPoints(objects.block2.shape:getPoints()))
   love.graphics.setColor(200, 200, 200)
   -----------------Physics-------------
-  
-  for i,v in ipairs(collectables) do
-    love.graphics.print(i, 50, i*50)
-    love.graphics.print(word.sub(word, i, i), 0, i * 50)
-  end
-  love.graphics.print(test, 0, 0)
 end
 
 function CheckGround() -- function finds height of ground beneath the player and decides if the player has fallen off a platform
@@ -819,6 +831,16 @@ function CheckCollectables() -- function checks if any collectables have been co
         end
         table.insert(letters, letter)
       end
+    end
+  end
+  
+  -- collect coins
+  for i,v in ipairs(coins) do
+    local hitTest = CheckCollision(v.X, v.Y, v.Width, v.Height, pX, pY, pWidth, pHeight)
+    if hitTest then
+      stageCoinsCollected = stageCoinsCollected + 1
+      gameCoinsCollected = gameCoinsCollected + 1
+      table.remove(coins, i)
     end
   end
 end
