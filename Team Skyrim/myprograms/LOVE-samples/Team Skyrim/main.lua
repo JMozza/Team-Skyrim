@@ -311,7 +311,7 @@ function love.keypressed(key)
 end
 
 function love.mousepressed(x, y, button, isTouch)
-  if gamestate == "easy" then
+  if gamestate == "easy" then  
     local letterTouched = false
     for i,v in ipairs(letters) do
       if v.CorrectOrder == false then
@@ -522,6 +522,7 @@ function love.update(dt)
     CheckCollectables()
     CheckLeftWalls()
     CheckRightWalls()
+
   end
   
   -----------------Physics-------------
@@ -562,6 +563,11 @@ function love.draw()
     love.graphics.print("controls: top left to move left. top middle", 0, 100)  -- controls
     love.graphics.print("to jump. top right to move right. bottom to", 0, 120)
     love.graphics.print("fall through platform.", 0, 140)
+    
+    
+    love.graphics.draw(BImage, objects.block1.body:getX() - 25, objects.block1.body:getY() - 25)
+    
+    love.graphics.draw(BImage, objects.block2.body:getX() - 25, objects.block2.body:getY() - 25)
   else
     love.graphics.setFont(font_50)
     love.graphics.print("GAME COMPLETE", 100 * scaleX, 100 * scaleY) -- completion message
@@ -629,12 +635,12 @@ function love.draw()
   --love.graphics.polygon("line", objects.platform1.body:getWorldPoints(objects.platform1.shape:getPoints())) 
   --love.graphics.setColor(200, 200, 200)
   --love.graphics.polygon("line", objects.platform2.body:getWorldPoints(objects.platform2.shape:getPoints())) 
-  love.graphics.setColor(255, 0, 0)
+  --love.graphics.setColor(255, 0, 0)
   --love.graphics.draw(letter, objects.block1.body:getWorldPoints(objects.block1.shape:getPoints()))
-  love.graphics.polygon("fill", objects.block1.body:getWorldPoints(objects.block1.shape:getPoints()))
-  love.graphics.setColor(0, 0, 255)
-  love.graphics.polygon("fill", objects.block2.body:getWorldPoints(objects.block2.shape:getPoints()))
-  love.graphics.setColor(200, 200, 200)
+  --love.graphics.polygon("fill", objects.block1.body:getWorldPoints(objects.block1.shape:getPoints()))
+  --love.graphics.setColor(0, 0, 255)
+  --love.graphics.polygon("fill", objects.block2.body:getWorldPoints(objects.block2.shape:getPoints()))
+  --love.graphics.setColor(200, 200, 200)
   -----------------Physics-------------
 end
 
