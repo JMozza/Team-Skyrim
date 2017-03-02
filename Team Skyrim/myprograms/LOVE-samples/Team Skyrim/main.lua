@@ -1,7 +1,6 @@
 local anim8 = require "anim8"
 require "menu" --Main menu
 require "oMenu" --Options menu
-require "dMenu" --Difficulty level Menu
 --require "pMenu" --Pause Menu
 require "soundBar" --Soundbar in options menu
 require "cMenu" --Character Selection Menu
@@ -58,12 +57,6 @@ function love.load()
   oButton_spawn(250 * scaleX,170 * scaleY, "+","5")
   oButton_spawn(64 * scaleX,250 * scaleY, "Toggle Sounds","6")
   oButton_spawn(72 * scaleX,330 * scaleY, "Visit Our Site","7")
-  
-  --Difficulty Level Buttons
-  dButton_spawn(115 * scaleX,170 * scaleY, "Easy","1")
-  dButton_spawn(80 * scaleX,250 * scaleY, "intermediate","2")
-  dButton_spawn(95 * scaleX,330 * scaleY, "Advanced","3")
-  dButton_spawn(70 * scaleX,410 * scaleY, "Return To Menu","4")
 
   --Character Selection Buttons
   cButton_spawn(70 * scaleX,420 * scaleY, "Return To Menu","1")
@@ -497,20 +490,7 @@ function love.update(dt)
   end
     
   if gamestate == "easy" and love.keyboard.isDown("return") then
-    gamestate = "levelSelect"
-  end
-  
-  if gamestate == "intermediate" and love.keyboard.isDown("return") then
-    gamestate = "levelSelect"
-  end
-  
-  if gamestate == "advanced" and love.keyboard.isDown("return") then
-    gamestate = "levelSelect"
-  end
-    
-  if gamestate == "levelSelect" then
-    dButton_check()
-    animation:update(dt)
+    gamestate = "menu"
   end
   
   if gamestate == "easy" then
@@ -576,29 +556,11 @@ function love.draw()
       love.graphics.print("STAR", (i - 1) * 50* scaleX, 200* scaleY, 0, spriteScalerX, spriteScalerY)
     end
   end
-  
-  if gamestate == "intermediate" then
-    love.graphics.print("Not added yet ",10 * scaleX,10 * scaleY)
-  end
-  
-  if gamestate == "advanced" then
-    love.graphics.print("Not added yet ",10 * scaleX ,10 * scaleY)       
-  end
-      
+        
   if gamestate == "menu" then
     love.graphics.draw(placeholder, 0, 0, 0, spriteScalerX, spriteScalerY)
     animation:draw(titleSpritesheet, 15, 15, 0, spriteScalerX, spriteScalerY)
     button_draw()
-  end
-  
-  if gamestate == "levelSelect" then
-    love.graphics.draw(placeholder, 0, 0, 0, spriteScalerX, spriteScalerY)
-    dButton_draw()
-    animation:draw(titleSpritesheet, 15, 15, 0, spriteScalerX, spriteScalerY)
-    love.graphics.setColor(0,255,233)
-    love.graphics.setFont(subtitlefont)
-    love.graphics.print("Select Difficulty", 45 * scaleX, 90 * scaleY)   
-    love.graphics.setColor(255,255,255)
   end
   
   if gamestate == "scoreboard" then
