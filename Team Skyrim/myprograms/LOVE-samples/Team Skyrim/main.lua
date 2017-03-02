@@ -149,7 +149,7 @@ function love.load()
   platforms = {}
   platformImage = love.graphics.newImage("sprites/Placeholder2.png")
   
-  for i=0,2 do
+  for i = 0, 2 do
     platform = {} -- new platform
     platform.Width = platformImage:getWidth() * scaleX-- constant; platform's width
     platform.Height = platformImage:getHeight() * scaleY-- constant; platform's height
@@ -169,7 +169,6 @@ function love.load()
   
   --variables for collectables
   collectables = {} -- collectables on the screen
-  collectableCount = 0 -- amount of collectables
   AImage = love.graphics.newImage("sprites/Props/Letters/A.png")
   BImage = love.graphics.newImage("sprites/Props/Letters/B.png")
   CImage = love.graphics.newImage("sprites/Props/Letters/C.png")
@@ -198,25 +197,21 @@ function love.load()
   ZImage = love.graphics.newImage("sprites/Props/Letters/Z.png")
   
   -- different letter lengths
-  word = "DANIEL"
-  wordLength = #word
+  word = "DAN"
+  collectableCount = #word
   
-  for i=0,wordLength-1 do
+  for i = 1, collectableCount do
     collectable = {} -- new collectable
     collectable.Width = AImage:getWidth() * scaleX -- constant; collectable's width
     collectable.Height = AImage:getHeight() * scaleY -- constant; collectable's height
     widthGen(0, 200) -- set these to the start and end of the platforms
-    heightGen(0, 3)
-    if i == 0 then
-      collectable.X = 0 -- collectable's x co-ordinate
-      collectable.Y = love.graphics.getHeight() / 2 -- collectable's y co-ordinate
-      collectable.Letter = "B" -- letter the collectable represents
-      collectable.Image = BImage -- image of the letter
+    heightGen(0, 200)
+    collectable.X = random -- this calls a random function with the start and end x and y passed in above
+    collectable.Y =  100 -- collectable's y co-ordinate
+    collectable.Letter = word.sub(word, i, i) -- letter the collectable represents
+    if i == 1 then
       nextLetter = collectable.Letter -- the letter that should be collected next
     end
-    collectable.X = random -- this calls a random function with the start and end x and y passed in above
-    collectable.Y =  0--love.graphics.getHeight() -- collectable's y co-ordinate
-    collectable.Letter = word.sub(word,i+1,i+1) -- letter the collectable represents
     collectable.CorrectOrder = true -- false if collectable has been collected in the wrong order
     
     if collectable.Letter == "A" then
@@ -274,7 +269,6 @@ function love.load()
     end
     
     table.insert(collectables, collectable)
-    collectableCount = collectableCount + 1 -- increment collectable count
   end
   
   -- variables for collected letters
@@ -298,6 +292,8 @@ function love.load()
   hastouched = false
   
   love.window.setMode(width * scaleX, height * scaleY)
+  
+  test = 0
 end
 
 function love.keypressed(key)
@@ -396,8 +392,8 @@ function love.touchpressed( id, x, y, dx, dy, pressure )
       for i,v in ipairs(letters) do
         if v.CorrectOrder == false then
           if y * love.graphics.getHeight() <= yPressCheck then
-            if x * love.graphics.getWidth() > (letterOrder * (50 * scaleX) * scaleX) then
-              if x * love.graphics.getWidth() <= ((letterOrder * 50 + 50) * scaleX) * scaleX then
+            if x * love.graphics.getWidth() > (letterOrder * 50 * scaleX) then
+              if x * love.graphics.getWidth() <= (letterOrder * 50 + 50) * scaleX then
                 correctLetterOrder = true
                 for i,v in ipairs(collectables) do
                   if v.CorrectOrder == false then
@@ -555,13 +551,12 @@ function love.draw()
         love.graphics.draw(incorrectLetterImage, (i - 1) * 50, 0, 0, spriteScalerX, spriteScalerY)
         love.graphics.print(v.Letter, (i - 1) * 50, 0)
       end
-    end
-    love.graphics.draw(pImage, pQuad, pX, pY, 0, spriteScalerX, spriteScalerY)   
- 
-    love.graphics.setNewFont(12)
-    love.graphics.print("controls: top left to move left. top middle", 0, 100)  -- controls
-    love.graphics.print("to jump. top right to move right. bottom to", 0, 120)
-    love.graphics.print("fall through platform.", 0, 140)
+    end    
+    love.graphics.setFont(font_12)  
+    love.graphics.print("controls: top left to move left. top middle", 0, 100 * scaleY)  -- controls
+    love.graphics.print("to jump. top right to move right. bottom to", 0, 120 * scaleY)
+    love.graphics.print("fall through platform.", 0, 140 * scaleY)
+    love.graphics.draw(pImage, pQuad, pX, pY, 0, spriteScalerX, spriteScalerY)
   else
     love.graphics.setFont(font_50)
     love.graphics.print("GAME COMPLETE", 100 * scaleX, 100 * scaleY) -- completion message
@@ -636,6 +631,12 @@ function love.draw()
   love.graphics.polygon("fill", objects.block2.body:getWorldPoints(objects.block2.shape:getPoints()))
   love.graphics.setColor(200, 200, 200)
   -----------------Physics-------------
+  
+  for i,v in ipairs(collectables) do
+    love.graphics.print(i, 50, i*50)
+    love.graphics.print(word.sub(word, i, i), 0, i * 50)
+  end
+  love.graphics.print(test, 0, 0)
 end
 
 function CheckGround() -- function finds height of ground beneath the player and decides if the player has fallen off a platform
@@ -793,13 +794,13 @@ function CheckCollectables() -- function checks if any collectables have been co
       if hitTest then
         letter = {}
         letter.Letter = v.Letter
-        if v.Letter == nextLetter then
+        if letter.Letter == nextLetter then
           table.remove(collectables, i)
           letter.CorrectOrder = true
           letter.Image = v.Image
           letterCount = letterCount + 1
           collectableCount = collectableCount - 1
-          
+          test = test + 1
           if next(collectables) ~= nil then
             local first = true
             for i,v in ipairs(collectables) do
@@ -851,10 +852,10 @@ function CheckCollision(x1, y1, w1, h1, x2, y2, w2, h2) -- function performs a c
          y2 < y1 + h1
 end
 
-function heightGen(bottomLevel, toplevel) -- this function is used for the positions of the collectables upon level creation
-   random2 = math.random(bottomLevel, toplevel)
+function widthGen(startWidth, endWidth) -- this function is used for the positions of the collectables upon level creation
+  random = math.random(startWidth, endWidth)
 end
 
-function widthGen(startWidth, endWidth) -- this function is used for the positions of the collectables upon level creation
-   random = math.random(startWidth, endWidth)
+function heightGen(bottomLevel, toplevel) -- this function is used for the positions of the collectables upon level creation
+  random2 = math.random(bottomLevel, toplevel)
 end
