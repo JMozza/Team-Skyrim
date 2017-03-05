@@ -5,10 +5,16 @@ require "oMenu" --Options menu
 require "soundBar" --Soundbar in options menu
 require "cMenu" --Character Selection Menu
 require "sMenu" --Scoreboard Menu
+require "playerMovement"
+require "newPositions"
+require "controls"
+require "level_1"
+require "loadPositions"
 
-function love.load()
+function love.load()  
   math.randomseed(os.time()) -- needed for random generation
   gamestate = "menu"
+  --setting OS
   width = 270
   height = 480
   if love.system.getOS() == "Android" then
@@ -19,13 +25,39 @@ function love.load()
     scaleX = 1
     scaleY = 1
   end
- 
-  --fonts
-  font = love.graphics.newFont("fonts/goodd.ttf", 28 * scaleX)
-  optionfont = love.graphics.newFont("fonts/goodd.ttf", 12 * scaleX)
-  subtitlefont = love.graphics.newFont("fonts/goodd.ttf", 34 * scaleX)
-  font_12 = love.graphics.newFont(12* scaleX)
-  font_50 = love.graphics.newFont(50)
+  
+  --variables for collectables
+  collectables = {} -- collectables on the screen
+  AImage = love.graphics.newImage("sprites/Props/Letters/A.png")
+  BImage = love.graphics.newImage("sprites/Props/Letters/B.png")
+  CImage = love.graphics.newImage("sprites/Props/Letters/C.png")
+  DImage = love.graphics.newImage("sprites/Props/Letters/D.png")
+  EImage = love.graphics.newImage("sprites/Props/Letters/E.png")
+  FImage = love.graphics.newImage("sprites/Props/Letters/F.png")
+  GImage = love.graphics.newImage("sprites/Props/Letters/G.png")
+  HImage = love.graphics.newImage("sprites/Props/Letters/H.png")
+  IImage = love.graphics.newImage("sprites/Props/Letters/I.png")
+  JImage = love.graphics.newImage("sprites/Props/Letters/J.png")
+  KImage = love.graphics.newImage("sprites/Props/Letters/K.png")
+  LImage = love.graphics.newImage("sprites/Props/Letters/L.png")
+  MImage = love.graphics.newImage("sprites/Props/Letters/M.png")
+  NImage = love.graphics.newImage("sprites/Props/Letters/N.png")
+  OImage = love.graphics.newImage("sprites/Props/Letters/O.png")
+  PImage = love.graphics.newImage("sprites/Props/Letters/P.png")
+  QImage = love.graphics.newImage("sprites/Props/Letters/Q.png")
+  RImage = love.graphics.newImage("sprites/Props/Letters/R.png")
+  SImage = love.graphics.newImage("sprites/Props/Letters/S.png")
+  TImage = love.graphics.newImage("sprites/Props/Letters/T.png")
+  UImage = love.graphics.newImage("sprites/Props/Letters/U.png")
+  VImage = love.graphics.newImage("sprites/Props/Letters/V.png")
+  WImage = love.graphics.newImage("sprites/Props/Letters/W.png")
+  XImage = love.graphics.newImage("sprites/Props/Letters/X.png")
+  YImage = love.graphics.newImage("sprites/Props/Letters/Y.png")
+  ZImage = love.graphics.newImage("sprites/Props/Letters/Z.png")
+  
+  --images for gamescreen
+  gamebackground = love.graphics.newImage("sprites/Background/BG.png")
+  letter = love.graphics.newImage("sprites/testletter.jpg")
   
   --images for menu
   titleSpritesheet = love.graphics.newImage("sprites/TitleAnimation.png")
@@ -34,9 +66,23 @@ function love.load()
   tick = love.graphics.newImage("sprites/tick.png")
   tile = love.graphics.newImage("sprites/tile.png")
   
-  --images for gamescreen
-  gamebackground = love.graphics.newImage("sprites/Background/BG.png")
-  letter = love.graphics.newImage("sprites/testletter.jpg")
+  --charcter animation
+  pIdleImage = love.graphics.newImage("sprites/Characters/1___Idle.png")
+  pWrongImage = love.graphics.newImage("sprites/Characters/2___Wrong.png")
+  pCorrectImage = love.graphics.newImage("sprites/Characters/3___Correct.png")
+  pWalkingRightImage = love.graphics.newImage("sprites/Characters/4___WalkingRight.png")
+  pWalkingLeftImage = love.graphics.newImage("sprites/Characters/5___WalkingLeft.png")
+  pJumpingRightImage = love.graphics.newImage("sprites/Characters/6___JumpingRight.png")
+  pJumpingLeftImage = love.graphics.newImage("sprites/Characters/7___JumpingLeft.png")
+  
+ 
+  --fonts
+  font = love.graphics.newFont("fonts/goodd.ttf", 28 * scaleX)
+  optionfont = love.graphics.newFont("fonts/goodd.ttf", 12 * scaleX)
+  subtitlefont = love.graphics.newFont("fonts/goodd.ttf", 34 * scaleX)
+  font_12 = love.graphics.newFont(12* scaleX)
+  font_50 = love.graphics.newFont(50)
+  
 
   --Animation Variables
   grid = anim8.newGrid(240,56, titleSpritesheet:getWidth(), titleSpritesheet:getHeight())
@@ -129,13 +175,6 @@ function love.load()
   pMovingLeft = false -- true if player is being instructed to move left
   pMovingRight = false -- true if player is being instructed to move right
   pFrames = 0 -- player's frame counter
-  pIdleImage = love.graphics.newImage("sprites/Characters/1___Idle.png")
-  pWrongImage = love.graphics.newImage("sprites/Characters/2___Wrong.png")
-  pCorrectImage = love.graphics.newImage("sprites/Characters/3___Correct.png")
-  pWalkingRightImage = love.graphics.newImage("sprites/Characters/4___WalkingRight.png")
-  pWalkingLeftImage = love.graphics.newImage("sprites/Characters/5___WalkingLeft.png")
-  pJumpingRightImage = love.graphics.newImage("sprites/Characters/6___JumpingRight.png")
-  pJumpingLeftImage = love.graphics.newImage("sprites/Characters/7___JumpingLeft.png")
   pImage = pIdleImage -- current spritesheet in use
   pQuad = love.graphics.newQuad(0, 0, pSpriteWidth, pSpriteHeight, pImage:getWidth(), pImage:getHeight())
   
@@ -143,136 +182,19 @@ function love.load()
   platforms = {}
   platformImage = love.graphics.newImage("sprites/Placeholder2.png")
   
-  for i = 0, 2 do
-    platform = {} -- new platform
-    platform.Width = platformImage:getWidth() * scaleX-- constant; platform's width
-    platform.Height = platformImage:getHeight() * scaleY-- constant; platform's height
-    if i == 0 then
-      platform.X = love.graphics.getWidth() / 2.7 -- platform's x co-ordinate
-      platform.Y = love.graphics.getHeight() / 1.11628 -- platform's y co-ordinate
-    elseif i == 1 then
-      platform.X = love.graphics.getWidth() / 1.8 -- platform's x co-ordinate
-      platform.Y = love.graphics.getHeight() / 1.263158 -- platform's y co-ordinate
-    else
-      platform.X = love.graphics.getWidth() / 1.35 -- platform's x co-ordinate
-      platform.Y = love.graphics.getHeight() / 1.454545 -- platform's y co-ordinate
-    end
-    platform.GroundFound = false -- used for ground check
-    table.insert(platforms, platform)
-  end
   
-  --variables for collectables
-  collectables = {} -- collectables on the screen
-  AImage = love.graphics.newImage("sprites/Props/Letters/A.png")
-  BImage = love.graphics.newImage("sprites/Props/Letters/B.png")
-  CImage = love.graphics.newImage("sprites/Props/Letters/C.png")
-  DImage = love.graphics.newImage("sprites/Props/Letters/D.png")
-  EImage = love.graphics.newImage("sprites/Props/Letters/E.png")
-  FImage = love.graphics.newImage("sprites/Props/Letters/F.png")
-  GImage = love.graphics.newImage("sprites/Props/Letters/G.png")
-  HImage = love.graphics.newImage("sprites/Props/Letters/H.png")
-  IImage = love.graphics.newImage("sprites/Props/Letters/I.png")
-  JImage = love.graphics.newImage("sprites/Props/Letters/J.png")
-  KImage = love.graphics.newImage("sprites/Props/Letters/K.png")
-  LImage = love.graphics.newImage("sprites/Props/Letters/L.png")
-  MImage = love.graphics.newImage("sprites/Props/Letters/M.png")
-  NImage = love.graphics.newImage("sprites/Props/Letters/N.png")
-  OImage = love.graphics.newImage("sprites/Props/Letters/O.png")
-  PImage = love.graphics.newImage("sprites/Props/Letters/P.png")
-  QImage = love.graphics.newImage("sprites/Props/Letters/Q.png")
-  RImage = love.graphics.newImage("sprites/Props/Letters/R.png")
-  SImage = love.graphics.newImage("sprites/Props/Letters/S.png")
-  TImage = love.graphics.newImage("sprites/Props/Letters/T.png")
-  UImage = love.graphics.newImage("sprites/Props/Letters/U.png")
-  VImage = love.graphics.newImage("sprites/Props/Letters/V.png")
-  WImage = love.graphics.newImage("sprites/Props/Letters/W.png")
-  XImage = love.graphics.newImage("sprites/Props/Letters/X.png")
-  YImage = love.graphics.newImage("sprites/Props/Letters/Y.png")
-  ZImage = love.graphics.newImage("sprites/Props/Letters/Z.png")
   
   -- different letter lengths
   word = "DAN"
   collectableCount = #word
-  
-  for i = 1, collectableCount do
-    collectable = {} -- new collectable
-    collectable.Width = AImage:getWidth() * scaleX -- constant; collectable's width
-    collectable.Height = AImage:getHeight() * scaleY -- constant; collectable's height
-    widthGen(0, 200) -- set these to the start and end of the platforms
-    heightGen(0, 200)
-    collectable.X = random -- this calls a random function with the start and end x and y passed in above
-    collectable.Y =  100 -- collectable's y co-ordinate
-    collectable.Letter = word.sub(word, i, i) -- letter the collectable represents
-    if i == 1 then
-      nextLetter = collectable.Letter -- the letter that should be collected next
-    end
-    collectable.X = random -- this calls a random function with the start and end x and y passed in above
-    collectable.Y =  heightGen(1, 3)--love.graphics.getHeight() -- collectable's y co-ordinate
-    collectable.Letter = word.sub(word,i+1,i+1) -- letter the collectable represents
-    collectable.CorrectOrder = true -- false if collectable has been collected in the wrong order
-    
-    if collectable.Letter == "A" then
-      collectable.Image = AImage -- image of the letter
-    elseif collectable.Letter == "B" then
-      collectable.Image = BImage -- image of the letter
-    elseif collectable.Letter == "C" then
-      collectable.Image = CImage -- image of the letter
-    elseif collectable.Letter == "D" then
-      collectable.Image = DImage -- image of the letter
-    elseif collectable.Letter == "E" then
-      collectable.Image = EImage -- image of the letter
-    elseif collectable.Letter == "F" then
-      collectable.Image = FImage -- image of the letter
-    elseif collectable.Letter == "G" then
-      collectable.Image = GImage -- image of the letter
-    elseif collectable.Letter == "H" then
-      collectable.Image = HImage -- image of the letter
-    elseif collectable.Letter == "I" then
-      collectable.Image = IImage -- image of the letter
-    elseif collectable.Letter == "J" then
-      collectable.Image = JImage -- image of the letter
-    elseif collectable.Letter == "K" then
-      collectable.Image = KImage -- image of the letter
-    elseif collectable.Letter == "L" then
-      collectable.Image = LImage -- image of the letter
-    elseif collectable.Letter == "M" then
-      collectable.Image = MImage -- image of the letter
-    elseif collectable.Letter == "N" then
-      collectable.Image = NImage -- image of the letter
-    elseif collectable.Letter == "O" then
-      collectable.Image = OImage -- image of the letter
-    elseif collectable.Letter == "P" then
-      collectable.Image = PImage -- image of the letter
-    elseif collectable.Letter == "Q" then
-      collectable.Image = QImage -- image of the letter
-    elseif collectable.Letter == "R" then
-      collectable.Image = RImage -- image of the letter
-    elseif collectable.Letter == "S" then
-      collectable.Image = SImage -- image of the letter
-    elseif collectable.Letter == "T" then
-      collectable.Image = TImage -- image of the letter
-    elseif collectable.Letter == "U" then
-      collectable.Image = UImage -- image of the letter
-    elseif collectable.Letter == "V" then
-      collectable.Image = VImage -- image of the letter
-    elseif collectable.Letter == "W" then
-      collectable.Image = WImage -- image of the letter
-    elseif collectable.Letter == "X" then
-      collectable.Image = XImage -- image of the letter
-    elseif collectable.Letter == "Y" then
-      collectable.Image = YImage -- image of the letter
-    elseif collectable.Letter == "Z" then
-      collectable.Image = ZImage -- image of the letter
-    end
-    
-    table.insert(collectables, collectable)
-  end
   
   -- variables for collected letters
   letters = {} -- collected letters
   letterCount = 0 -- amount of letters
   correctLetterOrder = true -- true if all letters have currently been collected in the correct order
   incorrectLetterImage = love.graphics.newImage("sprites/Placeholder4.png")
+  
+  loadPositions()
   
   -- variables for stars
   stars = {} -- stars earned. every round starts with 3 stars. stars get taken away for errors and are presented at the end of a level
@@ -304,178 +226,6 @@ function love.load()
   hastouched = false
   
   love.window.setMode(width * scaleX, height * scaleY)
-end
-
-function love.keypressed(key)
-   if key == "space" then
-      startCount = 1
-      objects.block1.body:applyAngularImpulse(-550)
-      objects.block1.body:applyLinearImpulse(-535, -2000)
-      objects.block2.body:applyAngularImpulse(555)
-      objects.block2.body:applyLinearImpulse(520, -2000)
-   end
-end
-
-function love.mousepressed(x, y, button, isTouch)
-  if gamestate == "easy" then  
-    local letterTouched = false
-    for i,v in ipairs(letters) do
-      if v.CorrectOrder == false then
-        if y <= 50 then
-          if x > letterCount * 50 then
-            if x <= letterCount * 50 + 50 then
-              correctLetterOrder = true
-              for i,v in ipairs(collectables) do
-                if v.CorrectOrder == false then
-                  v.CorrectOrder = true
-                end
-              end
-              table.remove(letters, i)
-              letterTouched = true
-            end
-          end
-        end
-      end
-    end
-    
-    if letterTouched == false then
-      if y < ((love.graphics.getHeight() / 3) * 2) then
-        if x < (love.graphics.getWidth() / 4) then -- move left
-          pMovingLeft = true
-          pMovingRight = false
-        elseif x >= ((love.graphics.getWidth() / 4) * 3) then -- move right
-          pMovingLeft = false
-          pMovingRight = true
-        else -- jump
-          pMovingLeft = false
-          pMovingRight = false
-          if pY == pGround - pHeight then
-            pState = 1
-            pHeightFromJump = 20
-          end
-        end
-      else
-        if pState == 0 then -- fall through a platform
-          pHeightFromJump = -1
-          pY = pY - pHeightFromJump
-          pState = 2
-        end
-      end
-    end
-  end
-  
-  if gamestate == "menu" then
-    button_click(x,y)
-  end
-  
-  if gamestate == "scoreboard" then
-    sButton_click(x,y)
-  end
-    
-  if gamestate == "character" then
-    cButton_click(x,y)
-  end
-    
-  if gamestate == "levelSelect" then
-    dButton_click(x,y)
-  end
-  
-  if gamestate == "options" then
-    oButton_click(x,y)
-  end
-end
-
-function love.mousereleased(x, y, button, isTouch)
-  pMovingLeft = false
-  pMovingRight = false
-end
-
-function love.touchpressed( id, x, y, dx, dy, pressure )
-  if hastouched == true then
-    if gamestate == "easy" then
-      local letterTouched = false
-      startCount = 1
-      objects.block1.body:applyAngularImpulse(-550)
-      objects.block1.body:applyLinearImpulse(-535, -2000)
-      objects.block2.body:applyAngularImpulse(555)
-      objects.block2.body:applyLinearImpulse(520, -2000)
-      for i,v in ipairs(letters) do
-        if v.CorrectOrder == false then
-          if y * love.graphics.getHeight() <= yPressCheck then
-            if x * love.graphics.getWidth() > (letterOrder * 50 * scaleX) then
-              if x * love.graphics.getWidth() <= (letterOrder * 50 + 50) * scaleX then
-                correctLetterOrder = true
-                for i,v in ipairs(collectables) do
-                  if v.CorrectOrder == false then
-                    v.CorrectOrder = true
-                  end
-                end
-                table.remove(letters, i)
-                letterTouched = true
-              end
-            end
-          end
-        end
-      end
-      
-      if letterTouched == false then
-        if (y * love.graphics.getHeight()) < ((love.graphics.getHeight() / 3) * 2) then
-          if (x * love.graphics.getWidth()) < (love.graphics.getWidth() / 4) then -- move left
-            pMovingLeft = true
-            pMovingRight = false
-          elseif (x * love.graphics.getWidth()) >= ((love.graphics.getWidth() / 4) * 3) then -- move right
-            pMovingLeft = false
-            pMovingRight = true
-          else -- jump
-            pMovingLeft = false
-            pMovingRight = false
-            if pY == pGround - pHeight then
-              pState = 1
-              pHeightFromJump = 20
-            end
-          end
-        else
-          if pState == 0 then -- fall through a platform
-            pHeightFromJump = -1
-            pY = pY - pHeightFromJump
-            pState = 2
-          end
-        end
-      end
-      hastouched =true
-    end 
-     
-    if gamestate == "menu" then
-      button_click(x * love.graphics.getWidth(),y * love.graphics.getHeight())
-      hastouched =true
-    end
-    
-    if gamestate == "scoreboard" then
-      sButton_click(x * love.graphics.getWidth(),y * love.graphics.getHeight())
-      hastouched =true
-    end
-      
-    if gamestate == "character" then
-      cButton_click(x * love.graphics.getWidth(),y * love.graphics.getHeight())
-      hastouched =true
-    end
-      
-    if gamestate == "levelSelect" then
-      dButton_click(x * love.graphics.getWidth(),y * love.graphics.getHeight())
-      hastouched =true
-    end
-    
-    if gamestate == "options" then
-      oButton_click(x * love.graphics.getWidth(),y * love.graphics.getHeight())
-      hastouched =true
-    end
-  end
-end
-
-function love.touchreleased( id, x, y, dx, dy, pressure )
-  pMovingLeft = false
-  pMovingRight = false
-  hastouched = false
 end
 
 function love.update(dt)
@@ -532,54 +282,13 @@ end
 
 function love.draw()
   if gamestate == "easy" then
-    love.graphics.draw(gamebackground, 0, 0, 0, spriteScalerX, spriteScalerY)
-    love.graphics.setFont(font_50)
-    for i,v in ipairs(platforms) do
-      love.graphics.draw(platformImage, v.X, v.Y, 0, spriteScalerX, spriteScalerY)
-    end
-    for i,v in ipairs(collectables) do
-      if v.collectables then
-        love.graphics.draw(v.Image, v.X, v.Y, 0, spriteScalerX, spriteScalerY)
-      end
-    end
-    for i,v in ipairs(coins) do
-      love.graphics.draw(coinImage, v.X, v.Y, 0, spriteScalerX, spriteScalerY)
-    end
-    for i,v in ipairs(letters) do
-      if v.CorrectOrder then
-        love.graphics.draw(v.Image, (i - 1) * 50, 0, 0, spriteScalerX, spriteScalerY)
-      else
-        love.graphics.draw(incorrectLetterImage, (i - 1) * 50, 0, 0, spriteScalerX, spriteScalerY)
-        love.graphics.print(v.Letter, (i - 1) * 50, 0)
-      end
-    end
-    love.graphics.draw(pImage, pQuad, pX, pY, 0, spriteScalerX, spriteScalerY)   
- 
-    love.graphics.setNewFont(12)
-    love.graphics.print("controls: top left to move left. top middle", 0, 100)  -- controls
-    love.graphics.print("to jump. top right to move right. bottom to", 0, 120)
-    love.graphics.print("fall through platform.", 0, 140)
-    
-    
-    love.graphics.draw(BImage, objects.block1.body:getX() - 25, objects.block1.body:getY() - 25)
-    
-    love.graphics.draw(BImage, objects.block2.body:getX() - 25, objects.block2.body:getY() - 25) 
-    love.graphics.setFont(font_12)  
-    love.graphics.print("controls: top left to move left. top middle", 0, 100 * scaleY)  -- controls
-    love.graphics.print("to jump. top right to move right. bottom to", 0, 120 * scaleY)
-    love.graphics.print("fall through platform.", 0, 140 * scaleY)
-    love.graphics.draw(pImage, pQuad, pX, pY, 0, spriteScalerX, spriteScalerY)
-  else
-    love.graphics.setFont(font_50)
-    love.graphics.print("GAME COMPLETE", 100 * scaleX, 100 * scaleY) -- completion message
-    love.graphics.print("STAGE COIN COUNT: "..stageCoinsCollected, 150 * scaleX, 150 * scaleY)
-    love.graphics.print("GAME COIN COUNT: "..gameCoinsCollected, 150 * scaleX, 150 * scaleY)
-    for i,v in ipairs(stars) do
-      love.graphics.draw(starImage, (i - 1) * 50* scaleX, 200* scaleY, 0, spriteScalerX, spriteScalerY)
-      love.graphics.print("STAR", (i - 1) * 50* scaleX, 200* scaleY, 0, spriteScalerX, spriteScalerY)
-    end
+    level1()
   end
-        
+  
+  if gamestate == "easyComplete" then
+    endScreen()
+  end
+  
   if gamestate == "menu" then
     love.graphics.draw(placeholder, 0, 0, 0, spriteScalerX, spriteScalerY)
     animation:draw(titleSpritesheet, 15, 15, 0, spriteScalerX, spriteScalerY)
@@ -615,261 +324,24 @@ function love.draw()
     love.graphics.draw(checkbox, 185, 251)    
     sound_bars()
   end
-  -----------------Physics-------------
-  --love.graphics.setColor(200, 200, 200)
-  --love.graphics.polygon("line", objects.platform1.body:getWorldPoints(objects.platform1.shape:getPoints())) 
-  --love.graphics.setColor(200, 200, 200)
-  --love.graphics.polygon("line", objects.platform2.body:getWorldPoints(objects.platform2.shape:getPoints())) 
-  --love.graphics.setColor(255, 0, 0)
-  --love.graphics.draw(letter, objects.block1.body:getWorldPoints(objects.block1.shape:getPoints()))
-  --love.graphics.polygon("fill", objects.block1.body:getWorldPoints(objects.block1.shape:getPoints()))
-  --love.graphics.setColor(0, 0, 255)
-  --love.graphics.polygon("fill", objects.block2.body:getWorldPoints(objects.block2.shape:getPoints()))
-  --love.graphics.setColor(200, 200, 200)
-  -----------------Physics-------------
 end
 
-function CheckGround() -- function finds height of ground beneath the player and decides if the player has fallen off a platform
-  for i,v in ipairs(platforms) do
-    if pX > v.X - pWidth then
-      if pX < v.X + v.Width then
-        v.GroundFound = true
-      end
-    end
-    
-    if v.Y < pY + pHeight then
-      v.GroundFound = false
-    end
-  end
-  
-  local ground = love.graphics.getHeight()
-  for i,v in ipairs(platforms) do
-    if v.GroundFound then
-      if v.Y < ground then
-        ground = v.Y
-      end
-    end
-    v.GroundFound = false
-  end
-  pGround = ground
-  
-  if pY + pHeight < pGround then
-    if pState ~= 1 then
-      pState = 2
-    end
-  end
-end
-
-function PlayerMove() -- function moves player left or right
-  if pMovingLeft then
-    pDirection = 0
-    pX = pX - pSpeed
-  end
-  if pMovingRight then
-    pDirection = 1
-    pX = pX + pSpeed
-  end
-end
-
-function PlayerJump() -- function makes player rises after a jump input
-  if pState == 1 then
-    pY = pY - pHeightFromJump * scaleY
-    pHeightFromJump = pHeightFromJump - 1
-    if pHeightFromJump <= 0 then
-      pState = 2
-    end
-  end
-end
-
-function PlayerFall() -- function makes player fall after falling off a ledge or reaching the peak of it's jump and makes the player land
-  if pState == 2 then
-    pY = pY - pHeightFromJump * scaleY
-    pHeightFromJump = pHeightFromJump - 1
-    if pY >= pGround - pHeight then
-      pHeightFromJump = 0
-      pState = 0
-      pY = pGround - pHeight
-    end
-  end
-end
-
-function PlayerSprite() -- animate the player using the spritesheets
-  if pState == 0 then
-    if pMovingLeft then
-      if pMovingState ~= 1 then
-        pSprite = 0
-        pFrames = 0
-      end
-      pMovingState = 1
-      pFrames = pFrames + 1
-      
-      if pFrames >= 15 then
-        pFrames = 0
-        pSprite = pSprite + 1
-        if pSprite >= 4 then
-          pSprite = 0
-        end
-      end
-      
-      pImage = pWalkingLeftImage
-      pQuad = love.graphics.newQuad(pSprite * pSpriteWidth, 0, pSpriteWidth, pSpriteHeight, pImage:getWidth(), pImage:getHeight())
-    elseif pMovingRight then
-      if pMovingState ~= 2 then
-        pSprite = 0
-        pFrames = 0
-      end
-      pMovingState = 2
-      pFrames = pFrames + 1
-      
-      if pFrames >= 15 then
-        pFrames = 0
-        pSprite = pSprite + 1
-        if pSprite >= 4 then
-          pSprite = 0
-        end
-      end
-      
-      pImage = pWalkingRightImage
-      pQuad = love.graphics.newQuad(pSprite * pSpriteWidth, 0, pSpriteWidth, pSpriteHeight, pImage:getWidth(), pImage:getHeight())
-    else
-      pMovingState = 0
-      pImage = pIdleImage
-      pQuad = love.graphics.newQuad(0, 0, pSpriteWidth, pSpriteHeight, pImage:getWidth(), pImage:getHeight())
-    end
-  else
-    if pDirection == 0 then
-      if pJumpingState ~= 0 then
-        pSprite = 0
-        pFrames = 0
-      end
-      pJumpingState = 0
-      pFrames = pFrames + 1
-      
-      if pFrames >= 5 then
-        pFrames = 0
-        pSprite = pSprite + 1
-        if pSprite >= 8 then
-          pSprite = 0
-        end
-      end
-      
-      pImage = pJumpingLeftImage
-      pQuad = love.graphics.newQuad(pSprite * pSpriteWidth, 0, pSpriteWidth, pSpriteHeight, pImage:getWidth(), pImage:getHeight())
-    else
-      if pJumpingState ~= 1 then
-        pSprite = 0
-        pFrames = 0
-      end
-      pJumpingState = 1
-      pFrames = pFrames + 1
-      
-      if pFrames >= 5 then
-        pFrames = 0
-        pSprite = pSprite + 1
-        if pSprite >= 8 then
-          pSprite = 0
-        end
-      end
-      
-      pImage = pJumpingRightImage
-      pQuad = love.graphics.newQuad(pSprite * pSpriteWidth, 0, pSpriteWidth, pSpriteHeight, pImage:getWidth(), pImage:getHeight())
-    end
-  end
-end
-
-function CheckCollectables() -- function checks if any collectables have been collected
-  if correctLetterOrder then -- collectables can only be collected if all letters have been collected in the correct order
-    for i,v in ipairs(collectables) do
-      local hitTest = CheckCollision(v.X, v.Y, v.Width, v.Height, pX, pY, pWidth, pHeight)
-      if hitTest then
-        letter = {}
-        letter.Letter = v.Letter
-        if letter.Letter == nextLetter then
-          table.remove(collectables, i)
-          letter.CorrectOrder = true
-          letter.Image = v.Image
-          letterCount = letterCount + 1
-          collectableCount = collectableCount - 1
-          test = test + 1
-          if next(collectables) ~= nil then
-            local first = true
-            for i,v in ipairs(collectables) do
-              if first then
-                nextLetter = v.Letter
-                first = false
-              end
-            end
-          end
-          
-        else
-          v.CorrectOrder = false
-          letter.CorrectOrder = false
-          correctLetterOrder = false
-          table.remove(stars)
-        end
-        table.insert(letters, letter)
-      end
-    end
-  end
-  
-  -- collect coins
-  for i,v in ipairs(coins) do
-    local hitTest = CheckCollision(v.X, v.Y, v.Width, v.Height, pX, pY, pWidth, pHeight)
-    if hitTest then
-      stageCoinsCollected = stageCoinsCollected + 1
-      gameCoinsCollected = gameCoinsCollected + 1
-      table.remove(coins, i)
-    end
-  end
-end
-
-function CheckLeftWalls() -- function stops a player from passing through a platform's left wall
-  if pState ~= 1 then
-    for i,v in ipairs(platforms) do
-      local hitTest = CheckCollision(v.X, v.Y + 1, 1, v.Height - 2, pX, pY, pWidth, pHeight)
-      if hitTest then
-        pX = v.X - pWidth
-      end
-    end
-  end
-end
-
-function CheckRightWalls() -- function stops a player from passing through a platform's right wall
-  if pState ~= 1 then
-    for i,v in ipairs(platforms) do
-      local hitTest = CheckCollision(v.X + v.Width - 1, v.Y + 1, 1, v.Height - 2, pX, pY, pWidth, pHeight)
-      if hitTest then
-        pX = v.X + v.Width
-      end
-    end
-  end
-end
-
-function CheckCollision(x1, y1, w1, h1, x2, y2, w2, h2) -- function performs a collision check and returns a bool
+function CheckCollision(x1, y1, w1, h1, x2, y2, w2, h2)
   return x1 < x2 + w2 and
          x2 < x1 + w1 and
          y1 < y2 + h2 and
          y2 < y1 + h1
 end
 
-function heightGen(bottomLevel, toplevel) -- this function is used for the positions of the collectables upon level creation
-   random2 = math.random(bottomLevel, toplevel)
-   
-   if random2 == 1 then
-      colY = 50
-    end
-    if random2 == 2 then
-      colY = 100
-    end
-    if random2 == 3 then
-      colY = 150
-    end
-    return colY
+function love.mousepressed(x, y, button, isTouch)
+  mousePress(x, y)
 end
-function widthGen(startWidth, endWidth) -- this function is used for the positions of the collectables upon level creation
-  random = math.random(startWidth, endWidth)
+function love.mousereleased(x, y, button, isTouch)
+  mouseReleased()
 end
-
-function heightGen(bottomLevel, toplevel) -- this function is used for the positions of the collectables upon level creation
-  random2 = math.random(bottomLevel, toplevel)
+function love.touchpressed( id, x, y, dx, dy, pressure )
+  touchPress(x, y)
+end
+function love.touchreleased( id, x, y, dx, dy, pressure )
+  touchReleased()
 end

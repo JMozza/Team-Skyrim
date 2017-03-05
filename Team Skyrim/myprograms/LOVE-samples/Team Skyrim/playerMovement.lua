@@ -1,0 +1,215 @@
+function CheckGround() -- function finds height of ground beneath the player and decides if the player has fallen off a platform
+  for i,v in ipairs(platforms) do
+    if pX > v.X - pWidth then
+      if pX < v.X + v.Width then
+        v.GroundFound = true
+      end
+    end
+    
+    if v.Y < pY + pHeight then
+      v.GroundFound = false
+    end
+  end
+  
+  local ground = love.graphics.getHeight()
+  for i,v in ipairs(platforms) do
+    if v.GroundFound then
+      if v.Y < ground then
+        ground = v.Y
+      end
+    end
+    v.GroundFound = false
+  end
+  pGround = ground
+  
+  if pY + pHeight < pGround then
+    if pState ~= 1 then
+      pState = 2
+    end
+  end
+end
+
+function PlayerMove() -- function moves player left or right
+  if pMovingLeft then
+    pDirection = 0
+    pX = pX - pSpeed
+  end
+  if pMovingRight then
+    pDirection = 1
+    pX = pX + pSpeed
+  end
+end
+
+function PlayerJump() -- function makes player rises after a jump input
+  if pState == 1 then
+    pY = pY - pHeightFromJump * scaleY
+    pHeightFromJump = pHeightFromJump - 1
+    if pHeightFromJump <= 0 then
+      pState = 2
+    end
+  end
+end
+
+function PlayerFall() -- function makes player fall after falling off a ledge or reaching the peak of it's jump and makes the player land
+  if pState == 2 then
+    pY = pY - pHeightFromJump * scaleY
+    pHeightFromJump = pHeightFromJump - 1
+    if pY >= pGround - pHeight then
+      pHeightFromJump = 0
+      pState = 0
+      pY = pGround - pHeight
+    end
+  end
+end
+
+function PlayerSprite() -- animate the player using the spritesheets
+  if pState == 0 then
+    if pMovingLeft then
+      if pMovingState ~= 1 then
+        pSprite = 0
+        pFrames = 0
+      end
+      pMovingState = 1
+      pFrames = pFrames + 1
+      
+      if pFrames >= 15 then
+        pFrames = 0
+        pSprite = pSprite + 1
+        if pSprite >= 4 then
+          pSprite = 0
+        end
+      end
+      
+      pImage = pWalkingLeftImage
+      pQuad = love.graphics.newQuad(pSprite * pSpriteWidth, 0, pSpriteWidth, pSpriteHeight, pImage:getWidth(), pImage:getHeight())
+    elseif pMovingRight then
+      if pMovingState ~= 2 then
+        pSprite = 0
+        pFrames = 0
+      end
+      pMovingState = 2
+      pFrames = pFrames + 1
+      
+      if pFrames >= 15 then
+        pFrames = 0
+        pSprite = pSprite + 1
+        if pSprite >= 4 then
+          pSprite = 0
+        end
+      end
+      
+      pImage = pWalkingRightImage
+      pQuad = love.graphics.newQuad(pSprite * pSpriteWidth, 0, pSpriteWidth, pSpriteHeight, pImage:getWidth(), pImage:getHeight())
+    else
+      pMovingState = 0
+      pImage = pIdleImage
+      pQuad = love.graphics.newQuad(0, 0, pSpriteWidth, pSpriteHeight, pImage:getWidth(), pImage:getHeight())
+    end
+  else
+    if pDirection == 0 then
+      if pJumpingState ~= 0 then
+        pSprite = 0
+        pFrames = 0
+      end
+      pJumpingState = 0
+      pFrames = pFrames + 1
+      
+      if pFrames >= 5 then
+        pFrames = 0
+        pSprite = pSprite + 1
+        if pSprite >= 8 then
+          pSprite = 0
+        end
+      end
+      
+      pImage = pJumpingLeftImage
+      pQuad = love.graphics.newQuad(pSprite * pSpriteWidth, 0, pSpriteWidth, pSpriteHeight, pImage:getWidth(), pImage:getHeight())
+    else
+      if pJumpingState ~= 1 then
+        pSprite = 0
+        pFrames = 0
+      end
+      pJumpingState = 1
+      pFrames = pFrames + 1
+      
+      if pFrames >= 5 then
+        pFrames = 0
+        pSprite = pSprite + 1
+        if pSprite >= 8 then
+          pSprite = 0
+        end
+      end
+      
+      pImage = pJumpingRightImage
+      pQuad = love.graphics.newQuad(pSprite * pSpriteWidth, 0, pSpriteWidth, pSpriteHeight, pImage:getWidth(), pImage:getHeight())
+    end
+  end
+end
+
+function CheckCollectables() -- function checks if any collectables have been collected
+  if correctLetterOrder then -- collectables can only be collected if all letters have been collected in the correct order
+    for i,v in ipairs(collectables) do
+      local hitTest = CheckCollision(v.X, v.Y, v.Width, v.Height, pX, pY, pWidth, pHeight)
+      if hitTest then
+        letter = {}
+        letter.Letter = v.Letter
+        if letter.Letter == nextLetter then
+          table.remove(collectables, i)
+          letter.CorrectOrder = true
+          letter.Image = v.Image
+          letterCount = letterCount + 1
+          collectableCount = collectableCount - 1
+          test = test + 1
+          if next(collectables) ~= nil then
+            local first = true
+            for i,v in ipairs(collectables) do
+              if first then
+                nextLetter = v.Letter
+                first = false
+              end
+            end
+          end
+          
+        else
+          v.CorrectOrder = false
+          letter.CorrectOrder = false
+          correctLetterOrder = false
+          table.remove(stars)
+        end
+        table.insert(letters, letter)
+      end
+    end
+  end
+  
+  -- collect coins
+  for i,v in ipairs(coins) do
+    local hitTest = CheckCollision(v.X, v.Y, v.Width, v.Height, pX, pY, pWidth, pHeight)
+    if hitTest then
+      stageCoinsCollected = stageCoinsCollected + 1
+      gameCoinsCollected = gameCoinsCollected + 1
+      table.remove(coins, i)
+    end
+  end
+end
+
+function CheckLeftWalls() -- function stops a player from passing through a platform's left wall
+  if pState ~= 1 then
+    for i,v in ipairs(platforms) do
+      local hitTest = CheckCollision(v.X, v.Y + 1, 1, v.Height - 2, pX, pY, pWidth, pHeight)
+      if hitTest then
+        pX = v.X - pWidth
+      end
+    end
+  end
+end
+
+function CheckRightWalls() -- function stops a player from passing through a platform's right wall
+  if pState ~= 1 then
+    for i,v in ipairs(platforms) do
+      local hitTest = CheckCollision(v.X + v.Width - 1, v.Y + 1, 1, v.Height - 2, pX, pY, pWidth, pHeight)
+      if hitTest then
+        pX = v.X + v.Width
+      end
+    end
+  end
+end
