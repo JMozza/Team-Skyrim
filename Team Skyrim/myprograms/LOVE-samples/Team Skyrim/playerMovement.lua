@@ -159,7 +159,7 @@ function CheckCollectables() -- function checks if any collectables have been co
           letter.Image = v.Image
           letterCount = letterCount + 1
           collectableCount = collectableCount - 1
-          test = test + 1
+          
           if next(collectables) ~= nil then
             local first = true
             for i,v in ipairs(collectables) do

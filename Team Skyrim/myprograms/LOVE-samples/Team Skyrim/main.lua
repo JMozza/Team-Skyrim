@@ -182,8 +182,6 @@ function love.load()
   platforms = {}
   platformImage = love.graphics.newImage("sprites/Placeholder2.png")
   
-  
-  
   -- different letter lengths
   word = "DAN"
   collectableCount = #word
@@ -265,7 +263,6 @@ function love.update(dt)
     CheckCollectables()
     CheckLeftWalls()
     CheckRightWalls()
-
   end
   
   -----------------Physics-------------
@@ -336,12 +333,15 @@ end
 function love.mousepressed(x, y, button, isTouch)
   mousePress(x, y)
 end
+
 function love.mousereleased(x, y, button, isTouch)
   mouseReleased()
 end
+
 function love.touchpressed( id, x, y, dx, dy, pressure )
   touchPress(x, y)
 end
+
 function love.touchreleased( id, x, y, dx, dy, pressure )
   touchReleased()
 end

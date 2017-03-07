@@ -23,15 +23,22 @@ function loadPositions()
     collectable.Height = AImage:getHeight() * scaleY -- constant; collectable's height
     widthGen(0, 200) -- set these to the start and end of the platforms
     heightGen(0, 200)
-    collectable.X = random -- this calls a random function with the start and end x and y passed in above
-    collectable.Y =  100 -- collectable's y co-ordinate
+    
+    if i == 1 then
+      collectable.X = 0
+      collectable.Y = 0
+    elseif i == 2 then
+      collectable.X = 0
+      collectable.Y = 0
+    else
+      collectable.X = random -- this calls a random function with the start and end x and y passed in above
+      collectable.Y =  random * 2 -- collectable's y co-ordinate
+    end
+    
     collectable.Letter = word.sub(word, i, i) -- letter the collectable represents
     if i == 1 then
       nextLetter = collectable.Letter -- the letter that should be collected next
     end
-    collectable.X = random -- this calls a random function with the start and end x and y passed in above
-    collectable.Y =  heightGen(1, 3)--love.graphics.getHeight() -- collectable's y co-ordinate
-    collectable.Letter = word.sub(word,i+1,i+1) -- letter the collectable represents
     collectable.CorrectOrder = true -- false if collectable has been collected in the wrong order
     
     if collectable.Letter == "A" then
