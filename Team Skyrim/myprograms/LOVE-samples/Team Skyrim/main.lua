@@ -10,6 +10,7 @@ require "newPositions"
 require "controls"
 require "level_1"
 require "loadPositions"
+require "finishedScreenDraw"
 
 function love.load()  
   math.randomseed(os.time()) -- needed for random generation
@@ -75,14 +76,12 @@ function love.load()
   pJumpingRightImage = love.graphics.newImage("sprites/Characters/6___JumpingRight.png")
   pJumpingLeftImage = love.graphics.newImage("sprites/Characters/7___JumpingLeft.png")
   
- 
   --fonts
   font = love.graphics.newFont("fonts/goodd.ttf", 28 * scaleX)
   optionfont = love.graphics.newFont("fonts/goodd.ttf", 12 * scaleX)
   subtitlefont = love.graphics.newFont("fonts/goodd.ttf", 34 * scaleX)
   font_12 = love.graphics.newFont(12* scaleX)
   font_50 = love.graphics.newFont(50)
-  
 
   --Animation Variables
   grid = anim8.newGrid(240,56, titleSpritesheet:getWidth(), titleSpritesheet:getHeight())
@@ -161,7 +160,7 @@ function love.load()
   pMovingState = 0 -- 0 for idle, 1 for walking left, 2 for walking right
   pJumpingState = 0 --- 0 for left, 1 for right
   pSpeed = 3 * scaleX-- constant; player's speed
-  pGround = love.graphics.getHeight() -- height of the ground the player is currently over
+  pGround = love.graphics.getHeight() * 5 / 6 -- height of the ground the player is currently over
   pWidth = 48 * scaleX -- constant; player's width
   pHeight = 96 * scaleY -- constant; player's height
   pSpriteWidth = 48 -- constant; player's width for sprites from spritesheets
@@ -180,11 +179,14 @@ function love.load()
   
   -- variables for platforms
   platforms = {}
-  platformImage = love.graphics.newImage("sprites/Placeholder2.png")
+  rainbowImage = love.graphics.newImage("sprites/New backgrounds/boxRAINBOW.png")
+  cloudImage = love.graphics.newImage("sprites/New backgrounds/boxCLOUDa.png")
+  swingImage = love.graphics.newImage("sprites/New backgrounds/boxSWING.png")
   
   -- different letter lengths
   word = "DAN"
   collectableCount = #word
+  hint = "Gameplay programmer's nickname"
   
   -- variables for collected letters
   letters = {} -- collected letters
@@ -192,34 +194,22 @@ function love.load()
   correctLetterOrder = true -- true if all letters have currently been collected in the correct order
   incorrectLetterImage = love.graphics.newImage("sprites/Placeholder4.png")
   
-  loadPositions()
-  
   -- variables for stars
   stars = {} -- stars earned. every round starts with 3 stars. stars get taken away for errors and are presented at the end of a level
-  for i=0,2 do
-    star = {} -- new star
-    table.insert(stars, star)
-  end
   starImage = love.graphics.newImage("sprites/Placeholder5.png")
   
   -- variables for coins
   coins = {} -- coins collected since the game started
-  coinCount = 5 -- amount of coins in the stage
   stageCoinsCollected = 0 -- amount of coins the player has collected in the stage
   gameCoinsCollected = 0 -- amount of coins the player has collected throughout the game
   coinImage = love.graphics.newImage("sprites/checkbox.png")
-  for i=1,coinCount do
-    coin = {} -- new coin
-    coin.Width = coinImage:getWidth() * scaleX-- constant; coin's width
-    coin.Height = coinImage:getHeight() * scaleY-- constant; coin's height
-    coin.X = (i-1) * 10 + 200
-    coin.Y = 200
-    table.insert(coins, coin)
-  end
+  
+  loadPositions()
   
   spriteScalerX = 1 * scaleX
   spriteScalerY = 1 * scaleY
-  yPressCheck = 50 * scaleY
+  yPressCheckBottom = 450 * scaleY
+  yPressCheckTop = 400 * scaleY
   
   hastouched = false
   

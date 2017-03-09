@@ -3,17 +3,19 @@ function mousePress(x, y)
     local letterTouched = false
     for i,v in ipairs(letters) do
       if v.CorrectOrder == false then
-        if y <= 50 then
-          if x > letterCount * 50 then
-            if x <= letterCount * 50 + 50 then
-              correctLetterOrder = true
-              for i,v in ipairs(collectables) do
-                if v.CorrectOrder == false then
-                  v.CorrectOrder = true
+        if y <= 450 then
+          if y > 400 then
+            if x > letterCount * 50 then
+              if x <= letterCount * 50 + 50 then
+                correctLetterOrder = true
+                for i,v in ipairs(collectables) do
+                  if v.CorrectOrder == false then
+                    v.CorrectOrder = true
+                  end
                 end
+                table.remove(letters, i)
+                letterTouched = true
               end
-              table.remove(letters, i)
-              letterTouched = true
             end
           end
         end
@@ -83,17 +85,19 @@ function touchPress(x, y)
       objects.block2.body:applyLinearImpulse(520, -2000)
       for i,v in ipairs(letters) do
         if v.CorrectOrder == false then
-          if y * love.graphics.getHeight() <= yPressCheck then
-            if x * love.graphics.getWidth() > (letterOrder * 50 * scaleX) then
-              if x * love.graphics.getWidth() <= (letterOrder * 50 + 50) * scaleX then
-                correctLetterOrder = true
-                for i,v in ipairs(collectables) do
-                  if v.CorrectOrder == false then
-                    v.CorrectOrder = true
+          if y * love.graphics.getHeight() <= yPressCheckBottom then
+            if y * love.graphics.getHeight() > yPressCheckTop then
+              if x * love.graphics.getWidth() > (letterOrder * 50 * scaleX) then
+                if x * love.graphics.getWidth() <= (letterOrder * 50 + 50) * scaleX then
+                  correctLetterOrder = true
+                  for i,v in ipairs(collectables) do
+                    if v.CorrectOrder == false then
+                      v.CorrectOrder = true
+                    end
                   end
+                  table.remove(letters, i)
+                  letterTouched = true
                 end
-                table.remove(letters, i)
-                letterTouched = true
               end
             end
           end

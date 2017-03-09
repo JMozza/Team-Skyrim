@@ -11,7 +11,8 @@ function CheckGround() -- function finds height of ground beneath the player and
     end
   end
   
-  local ground = love.graphics.getHeight()
+  local ground = love.graphics.getHeight() * 5 / 6
+  
   for i,v in ipairs(platforms) do
     if v.GroundFound then
       if v.Y < ground then
