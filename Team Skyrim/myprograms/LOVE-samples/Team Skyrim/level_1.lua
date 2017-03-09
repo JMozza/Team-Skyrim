@@ -30,6 +30,4 @@ function level1()
   love.graphics.print("to jump. top right to move right. bottom to", 0, 120 * scaleY)
   love.graphics.print("fall through platform.", 0, 140 * scaleY)
   love.graphics.draw(pImage, pQuad, pX, pY, 0, spriteScalerX, spriteScalerY)
-  
-  love.graphics.print(objects.block1.body:getX() - 25, 100, 0)
 end

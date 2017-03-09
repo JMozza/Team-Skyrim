@@ -35,6 +35,7 @@ function loadPositions()
       collectable.Y =  random * 2 -- collectable's y co-ordinate
     end
     
+    collectable.Object = i
     collectable.Letter = word.sub(word, i, i) -- letter the collectable represents
     if i == 1 then
       nextLetter = collectable.Letter -- the letter that should be collected next

@@ -260,6 +260,17 @@ function love.update(dt)
     PlayerJump()
     PlayerFall()
     PlayerSprite()
+    
+    for i,v in ipairs(collectables) do
+      if v.Object == 1 then
+        v.X = objects.block1.body:getX() - 25
+        v.Y = objects.block1.body:getY() - 25
+      elseif v.Object == 2 then
+        v.X = objects.block2.body:getX() - 25
+        v.Y = objects.block2.body:getY() - 25
+      end
+    end
+    
     CheckCollectables()
     CheckLeftWalls()
     CheckRightWalls()
