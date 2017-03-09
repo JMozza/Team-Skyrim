@@ -120,7 +120,22 @@ function love.load()
   v_music = 1
   v_effects = 1
  
-  --------------------------Physics--------------------------------
+  --------------------------Physics + Backup--------------------------------
+  letter = {}
+  letter.x = width/2
+  letter.y = 540
+  letter.speed = 100
+  letter.direction = "u"
+  letterGrav = 10
+  letterHImpulse = 20
+  letterVImpulse = 10
+  
+  jetpack = {}
+  jetpack.x = width/2
+  jetpack.y = 540
+  jetpack.speed = 100
+  jetpack.direction = "u"
+  
   love.physics.setMeter(64)
   world = love.physics.newWorld(0, 9.81*64, true)
   
@@ -273,6 +288,62 @@ function love.update(dt)
     world:update(dt)
      --this puts the world into motion
   end
+  
+  if jetpack.direction == "uur" then jetpack.direction = "uul"
+    elseif jetpack.direction == "ur" then jetpack.direction = "ul"
+    elseif jetpack.direction == "urr" then jetpack.direction = "ull"
+    elseif jetpack.direction == "drr" then jetpack.direction = "dll"
+    elseif jetpack.direction == "dr" then jetpack.direction = "dl"
+    elseif jetpack.direction == "ddr" then jetpack.direction = "ddl"
+    elseif jetpack.direction == "ddl" then jetpack.direction = "ddr"
+    elseif jetpack.direction == "dl" then jetpack.direction = "dr"
+    elseif jetpack.direction == "dll" then jetpack.direction = "drr"
+    elseif jetpack.direction == "ull" then jetpack.direction = "urr"
+    elseif jetpack.direction == "ul" then jetpack.direction = "ur"
+    elseif jetpack.direction == "uul" then jetpack.direction = "uur"
+  end -- May use for bouncing off sides of screen
+  
+  if jetpack.direction == "u" then
+    jetpack.y = jetpack.y - 2 * (dt * jetpack.speed)
+  elseif jetpack.direction == "uur" then
+    jetpack.y = jetpack.y - 2 * (dt * jetpack.speed)
+    jetpack.x = jetpack.x + 1 * (dt * jetpack.speed)
+  elseif jetpack.direction == "ur" then
+    jetpack.y = jetpack.y - 2 * (dt * jetpack.speed)
+    jetpack.x = jetpack.x + 2 * (dt * jetpack.speed)
+  elseif jetpack.direction == "urr" then
+    jetpack.y = jetpack.y - 1 * (dt * jetpack.speed)
+    jetpack.x = jetpack.x + 2 * (dt * jetpack.speed)
+  elseif jetpack.direction == "drr" then
+    jetpack.y = jetpack.y + 1 * (dt * jetpack.speed)
+    jetpack.x = jetpack.x + 2 * (dt * jetpack.speed)
+  elseif jetpack.direction == "dr" then
+    jetpack.y = jetpack.y + 2 * (dt * jetpack.speed)
+    jetpack.x = jetpack.x + 2 * (dt * jetpack.speed)
+  elseif jetpack.direction == "ddr" then
+    jetpack.y = jetpack.y + 2 * (dt * jetpack.speed)
+    jetpack.x = jetpack.x + 1 * (dt * jetpack.speed)
+  elseif jetpack.direction == "d" then
+    jetpack.y = jetpack.y + 2 * (dt * jetpack.speed)
+  elseif jetpack.direction == "ddl" then
+    jetpack.y = jetpack.y + 2 * (dt * jetpack.speed)
+    jetpack.x = jetpack.x - 1 * (dt * jetpack.speed)
+  elseif jetpack.direction == "dl" then
+    jetpack.y = jetpack.y + 2 * (dt * jetpack.speed)
+    jetpack.x = jetpack.x - 2 * (dt * jetpack.speed)
+  elseif jetpack.direction == "dll" then
+    jetpack.y = jetpack.y + 1 * (dt * jetpack.speed)
+    jetpack.x = jetpack.x - 2 * (dt * jetpack.speed)
+  elseif jetpack.direction == "ull" then
+    jetpack.y = jetpack.y - 1 * (dt * jetpack.speed)
+    jetpack.x = jetpack.x - 2 * (dt * jetpack.speed)
+  elseif jetpack.direction == "ul" then
+    jetpack.y = jetpack.y - 2 * (dt * jetpack.speed)
+    jetpack.x = jetpack.x - 2 * (dt * jetpack.speed)
+  elseif jetpack.direction == "uul" then
+    jetpack.y = jetpack.y - 2 * (dt * jetpack.speed)
+    jetpack.x = jetpack.x - 1 * (dt * jetpack.speed)
+  end
   -----------------Physics-------------
   
   if collectableCount == 0 then -- level complete
@@ -281,6 +352,13 @@ function love.update(dt)
 end
 
 function love.draw()
+  
+  ----------------------Physics----------------------
+  love.graphics.draw(jetpack, jetpack.x, jetpack.y)
+  
+  love.graphics.draw(letter, letter.x, letter.y) -- rename to spawn different letters
+  ----------------------Physics----------------------
+  
   if gamestate == "easy" then
     level1()
   end
