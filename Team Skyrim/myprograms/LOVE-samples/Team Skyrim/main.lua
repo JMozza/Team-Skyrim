@@ -5,11 +5,14 @@ require "oMenu" --Options menu
 require "soundBar" --Soundbar in options menu
 require "cMenu" --Character Selection Menu
 require "sMenu" --Scoreboard Menu
+require "eMenu"
 require "playerMovement"
 require "newPositions"
 require "controls"
 require "level_1"
 require "loadPositions"
+require "finishedScreenDraw"
+require "levelReset"
 
 function love.load()  
   math.randomseed(os.time()) -- needed for random generation
@@ -90,26 +93,28 @@ function love.load()
 
   --Main Menu Buttons
   --90 200
-  button_spawn(90 * scaleX ,150 * scaleY, "Play Game","1")
-  button_spawn(55 * scaleX,210 * scaleY, "Character Select","2")
-  button_spawn(88 * scaleX,270 * scaleY, "Scoreboard","3")
-  button_spawn(102 * scaleX,330 * scaleY, "Options","4")
-  button_spawn(115 * scaleX,390 * scaleY, "Quit","5")
+  button_spawn(90 * scaleX ,  150 * scaleY, "Play Game","1")
+  button_spawn(55 * scaleX,   210 * scaleY, "Character Select","2")
+  button_spawn(88 * scaleX,   270 * scaleY, "Scoreboard","3")
+  button_spawn(102 * scaleX,  330 * scaleY, "Options","4")
+  button_spawn(115 * scaleX,  390 * scaleY, "Quit","5")
     
   --Option Menu Buttons
-  oButton_spawn(70 * scaleX,410 * scaleY, "Return To Menu","1")
-  oButton_spawn(20 * scaleX,90 * scaleY, "-","2")
-  oButton_spawn(250 * scaleX,90 * scaleY, "+","3")
-  oButton_spawn(20 * scaleX, 170 * scaleY, "-","4")
-  oButton_spawn(250 * scaleX,170 * scaleY, "+","5")
-  oButton_spawn(64 * scaleX,250 * scaleY, "Toggle Sounds","6")
-  oButton_spawn(72 * scaleX,330 * scaleY, "Visit Our Site","7")
+  oButton_spawn(70 * scaleX,  410 * scaleY, "Return To Menu","1")
+  oButton_spawn(20 * scaleX,  90 * scaleY, "-","2")
+  oButton_spawn(250 * scaleX, 90 * scaleY, "+","3")
+  oButton_spawn(20 * scaleX,  170 * scaleY, "-","4")
+  oButton_spawn(250 * scaleX, 170 * scaleY, "+","5")
+  oButton_spawn(64 * scaleX,  250 * scaleY, "Toggle Sounds","6")
+  oButton_spawn(72 * scaleX,  330 * scaleY, "Visit Our Site","7")
 
   --Character Selection Buttons
-  cButton_spawn(70 * scaleX,420 * scaleY, "Return To Menu","1")
+  cButton_spawn(70 * scaleX,  420 * scaleY, "Return To Menu","1")
   
   --Scoreboard Menu Buttons
-  sButton_spawn(70 * scaleX,420 * scaleY, "Return To Menu","1")
+  sButton_spawn(70 * scaleX,  420 * scaleY, "Return To Menu","1")
+  
+  eButton_spawn(70 * scaleX,  420 * scaleY, "Return To Menu","1")
   
   --Pause Menu Buttons
   --pButton_spawn(178,20, "Resume","1")
@@ -128,7 +133,7 @@ function love.load()
   
   objects.platform1 = {}
   objects.platform1.body = love.physics.newBody(world, width/2+103, 251) 
-  objects.platform1.shape = love.physics.newRectangleShape(50, 1) --make a rectangle with a width of 650 and a height of 50
+  objects.platform1.shape = love.physics.newRectangleShape(70, 1) --make a rectangle with a width of 650 and a height of 50
   objects.platform1.fixture = love.physics.newFixture(objects.platform1.body, objects.platform1.shape); --attach shape to body
   
   objects.platform2 = {}
@@ -259,21 +264,14 @@ function love.update(dt)
     PlayerMove()
     PlayerJump()
     PlayerFall()
-    PlayerSprite()
-    
-    for i,v in ipairs(collectables) do
-      if v.Object == 1 then
-        v.X = objects.block1.body:getX() - 25
-        v.Y = objects.block1.body:getY() - 25
-      elseif v.Object == 2 then
-        v.X = objects.block2.body:getX() - 25
-        v.Y = objects.block2.body:getY() - 25
-      end
-    end
-    
+    PlayerSprite()    
     CheckCollectables()
     CheckLeftWalls()
     CheckRightWalls()
+  end
+  
+  if gamestate == "easyComplete" then
+    eButton_check()
   end
   
   -----------------Physics-------------
@@ -295,6 +293,7 @@ function love.draw()
   
   if gamestate == "easyComplete" then
     endScreen()
+    eButton_draw()
   end
   
   if gamestate == "menu" then

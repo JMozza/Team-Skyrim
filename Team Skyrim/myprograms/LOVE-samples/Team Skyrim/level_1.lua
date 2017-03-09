@@ -25,6 +25,16 @@ function level1()
     end
   end
   
+  for i,v in ipairs(collectables) do
+    if v.Object == 1 then
+      v.X = objects.block1.body:getX() - 25
+      v.Y = objects.block1.body:getY() - 25
+    elseif v.Object == 2 then
+      v.X = objects.block2.body:getX() - 25
+      v.Y = objects.block2.body:getY() - 25
+    end
+  end
+  
   love.graphics.setFont(font_12)  
   love.graphics.print("controls: top left to move left. top middle", 0, 100 * scaleY)  -- controls
   love.graphics.print("to jump. top right to move right. bottom to", 0, 120 * scaleY)
