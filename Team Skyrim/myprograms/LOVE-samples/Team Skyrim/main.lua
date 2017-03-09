@@ -123,32 +123,41 @@ function love.load()
   --------------------------Physics--------------------------------
   love.physics.setMeter(64)
   world = love.physics.newWorld(0, 9.81*64, true)
+  world:setCallbacks(beginContact, endContact, preSolve, postSolve)
+  persisting = 0
   
   objects = {}
   
   objects.platform1 = {}
   objects.platform1.body = love.physics.newBody(world, width/2+103, 251) 
-  objects.platform1.shape = love.physics.newRectangleShape(50, 1) --make a rectangle with a width of 650 and a height of 50
-  objects.platform1.fixture = love.physics.newFixture(objects.platform1.body, objects.platform1.shape); --attach shape to body
+  objects.platform1.shape = love.physics.newRectangleShape(50, 1) 
+  objects.platform1.fixture = love.physics.newFixture(objects.platform1.body, objects.platform1.shape);
   
   objects.platform2 = {}
   objects.platform2.body = love.physics.newBody(world, 80, 140) 
-  objects.platform2.shape = love.physics.newRectangleShape(50, 1) --make a rectangle with a width of 650 and a height of 50
-  objects.platform2.fixture = love.physics.newFixture(objects.platform2.body, objects.platform2.shape); --attach shape to body
+  objects.platform2.shape = love.physics.newRectangleShape(50, 1) 
+  objects.platform2.fixture = love.physics.newFixture(objects.platform2.body, objects.platform2.shape);
   
   objects.block1 = {}
-  objects.block1.body = love.physics.newBody(world, width/2+176, -20, "dynamic") --place the body in the center of the world and make it dynamic, so it can move around
-  objects.block1.shape = love.physics.newRectangleShape(40, 40) --make a rectangle with a width of 650 and a height of 50
-  objects.block1.fixture = love.physics.newFixture(objects.block1.body, objects.block1.shape, 1) -- Attach fixture to body and give it a density of 1.
+  objects.block1.body = love.physics.newBody(world, width/2+176, -20, "dynamic") 
+  objects.block1.shape = love.physics.newRectangleShape(40, 40) 
+  objects.block1.fixture = love.physics.newFixture(objects.block1.body, objects.block1.shape, 1) 
   objects.block1.fixture:setRestitution(0) --bounce
   objects.block1.body:setMass(10)
   
   objects.block2 = {}
-  objects.block2.body = love.physics.newBody(world, -10, -210, "dynamic") --place the body in the center of the world and make it dynamic, so it can move around
-  objects.block2.shape = love.physics.newRectangleShape(40, 40) --make a rectangle with a width of 650 and a height of 50
-  objects.block2.fixture = love.physics.newFixture(objects.block2.body, objects.block2.shape, 1) -- Attach fixture to body and give it a density of 1.
+  objects.block2.body = love.physics.newBody(world, -10, -210, "dynamic")
+  objects.block2.body = love.physics.newBody(world, -10, -210, "dynamic")
+  objects.block2.shape = love.physics.newRectangleShape(40, 40) 
+  objects.block2.fixture = love.physics.newFixture(objects.block2.body, objects.block2.shape, 1)
   objects.block2.fixture:setRestitution(0) --bounce
   objects.block2.body:setMass(10)
+  
+  --objects.character = {}
+  --objects.character.body = love.physics.newBody(world, pX, pY, "dynamic")
+  --objects.character.shape = love.physics.newRectangleShape(40, 40) 
+  --objects.character.fixture = love.physics.newFixture(objects.character.body, objects.character.shape, 1) 
+  --objects.character.f:setUserData("Character") for data output
   --------------------------Physics--------------------------------
   
   -- variables for game
@@ -183,7 +192,7 @@ function love.load()
   platformImage = love.graphics.newImage("sprites/Placeholder2.png")
   
   -- different letter lengths
-  word = "DAN"
+  word = "DANISH"
   collectableCount = #word
   
   -- variables for collected letters
@@ -289,6 +298,7 @@ function love.update(dt)
 end
 
 function love.draw()
+  
   if gamestate == "easy" then
     level1()
   end
@@ -332,6 +342,11 @@ function love.draw()
     love.graphics.draw(checkbox, 185, 251)    
     sound_bars()
   end
+  
+  -----------Physics--------
+  --love.graphics.setColor(72, 160, 14)
+  --love.graphics.polygon("fill", objects.character.body:getWorldPoints(objects.character.shape:getPoints()))
+  -----------Physics--------
 end
 
 function CheckCollision(x1, y1, w1, h1, x2, y2, w2, h2)
@@ -356,3 +371,19 @@ end
 function love.touchreleased( id, x, y, dx, dy, pressure )
   touchReleased()
 end
+-------Physics------
+function beginContact(a, b, coll)
+  x,y = coll:getNormal()
+end
+ 
+function endContact(a, b, coll)
+  persisting = 0
+end
+ 
+function preSolve(a, b, coll)
+  persisting = persisting + 1
+end
+ 
+function postSolve(a, b, coll, normalimpulse, tangentimpulse)
+end
+-------Physics------
