@@ -189,8 +189,11 @@ function love.load()
   -- variables for platforms
   platforms = {}
   rainbowImage = love.graphics.newImage("sprites/New backgrounds/boxRAINBOW.png")
-  cloudImage = love.graphics.newImage("sprites/New backgrounds/boxCLOUDa.png")
+  cloudAImage = love.graphics.newImage("sprites/New backgrounds/boxCLOUDa.png")
+  cloudBImage = love.graphics.newImage("sprites/New backgrounds/boxCLOUDb.png")
+  cloudCImage = love.graphics.newImage("sprites/New backgrounds/boxCLOUDc.png")
   swingImage = love.graphics.newImage("sprites/New backgrounds/boxSWING.png")
+  boxScaler = 2 / 3
   
   -- different letter lengths
   word = "DANISH"

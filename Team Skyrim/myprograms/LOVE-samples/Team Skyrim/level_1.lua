@@ -7,7 +7,7 @@ function level1()
   love.graphics.setFont(font_50)
   
   for i,v in ipairs(platforms) do
-    love.graphics.draw(v.Image, v.X, v.Y, 0, spriteScalerX, spriteScalerY)
+    love.graphics.draw(v.Image, v.X, v.Y, 0, spriteScalerX * boxScaler, spriteScalerY * boxScaler)
   end
   
   for i,v in ipairs(collectables) do
