@@ -1,18 +1,45 @@
 function loadPositions()
-  for i = 0, 2 do
+  for i = 0, 5 do
     platform = {} -- new platform
-    platform.Width = platformImage:getWidth() * scaleX-- constant; platform's width
-    platform.Height = platformImage:getHeight() * scaleY-- constant; platform's height
+    
     if i == 0 then
-      platform.X = love.graphics.getWidth() / 2.7 -- platform's x co-ordinate
-      platform.Y = love.graphics.getHeight() / 1.11628 -- platform's y co-ordinate
+      platform.Image = rainbowImage
+      platform.Width = rainbowImage:getWidth() * scaleX-- constant; platform's width
+      platform.Height = rainbowImage:getHeight() * scaleY-- constant; platform's height
+      platform.X = 0 -- platform's x co-ordinate -- 0
+      platform.Y = love.graphics.getHeight() / 4 -- platform's y co-ordinate -- 120
     elseif i == 1 then
-      platform.X = love.graphics.getWidth() / 1.8 -- platform's x co-ordinate
-      platform.Y = love.graphics.getHeight() / 1.263158 -- platform's y co-ordinate
-    else
-      platform.X = love.graphics.getWidth() / 1.35 -- platform's x co-ordinate
-      platform.Y = love.graphics.getHeight() / 1.454545 -- platform's y co-ordinate
+      platform.Image = cloudImage
+      platform.Width = cloudImage:getWidth() * scaleX-- constant; platform's width
+      platform.Height = cloudImage:getHeight() * scaleY-- constant; platform's height
+      platform.X = love.graphics.getWidth() / 1.8 -- platform's x co-ordinate -- 150
+      platform.Y = love.graphics.getHeight() / 1.6 -- platform's y co-ordinate -- 300
+    elseif i == 2 then
+      platform.Image = cloudImage
+      platform.Width = cloudImage:getWidth() * scaleX-- constant; platform's width
+      platform.Height = cloudImage:getHeight() * scaleY-- constant; platform's height
+      platform.X = love.graphics.getWidth() / 1.35 -- platform's x co-ordinate -- 200
+      platform.Y = love.graphics.getHeight() / 1.92 -- platform's y co-ordinate -- 250
+    elseif i == 3 then
+      platform.Image = cloudImage
+      platform.Width = cloudImage:getWidth() * scaleX-- constant; platform's width
+      platform.Height = cloudImage:getHeight() * scaleY-- constant; platform's height
+      platform.X = love.graphics.getWidth() / 1.35 -- platform's x co-ordinate -- 200
+      platform.Y = love.graphics.getHeight() / 1.92 -- platform's y co-ordinate -- 250
+    elseif i == 4 then
+      platform.Image = swingImage
+      platform.Width = swingImage:getWidth() * scaleX-- constant; platform's width
+      platform.Height = swingImage:getHeight() * scaleY-- constant; platform's height
+      platform.X = love.graphics.getWidth() / 1.35 -- platform's x co-ordinate -- 200
+      platform.Y = love.graphics.getHeight() / 1.92 -- platform's y co-ordinate -- 250
+    elseif i == 5 then
+      platform.Image = swingImage
+      platform.Width = swingImage:getWidth() * scaleX-- constant; platform's width
+      platform.Height = swingImage:getHeight() * scaleY-- constant; platform's height
+      platform.X = love.graphics.getWidth() / 1.35 -- platform's x co-ordinate -- 200
+      platform.Y = love.graphics.getHeight() / 1.92 -- platform's y co-ordinate -- 250
     end
+    
     platform.GroundFound = false -- used for ground check
     table.insert(platforms, platform)
   end  
@@ -97,5 +124,19 @@ function loadPositions()
     end
     
     table.insert(collectables, collectable)
-  end  
+  end
+  
+  for i=1,5 do
+    coin = {} -- new coin
+    coin.Width = coinImage:getWidth() * scaleX-- constant; coin's width
+    coin.Height = coinImage:getHeight() * scaleY-- constant; coin's height
+    coin.X = (i-1) * 50 + 25
+    coin.Y = 200
+    table.insert(coins, coin)
+  end
+  
+  for i=0,2 do
+    star = {} -- new star
+    table.insert(stars, star)
+  end
 end
