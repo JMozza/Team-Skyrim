@@ -1,14 +1,6 @@
 function level1()
-  --for i,v in ipairs(platforms) do
-    --love.graphics.draw(v.Image, v.X, v.Y, 0, spriteScalerX, spriteScalerY)
-  --end
-  
   love.graphics.draw(gamebackground, 0, 0, 0, spriteScalerX, spriteScalerY)
   love.graphics.setFont(font_50)
-  
-  for i,v in ipairs(platforms) do
-    love.graphics.draw(v.Image, v.X, v.Y, 0, spriteScalerX * boxScaler, spriteScalerY * boxScaler)
-  end
   
   for i,v in ipairs(collectables) do
     if v.CorrectOrder then
@@ -29,10 +21,7 @@ function level1()
     end
   end
   
-  love.graphics.setFont(font_12)  
-  love.graphics.print("controls: top left to move left. top middle", 0, 100 * scaleY)  -- controls
-  love.graphics.print("to jump. top right to move right. bottom to", 0, 120 * scaleY)
-  love.graphics.print("fall through platform.", 0, 140 * scaleY)
+  love.graphics.setFont(font_12)
   love.graphics.print("HINT: "..hint, 0, 450 * scaleY)
   love.graphics.draw(pImage, pQuad, pX, pY, 0, spriteScalerX, spriteScalerY)
 end

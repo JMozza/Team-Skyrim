@@ -196,7 +196,7 @@ function love.load()
   boxScaler = 2 / 3
   
   -- different letter lengths
-  word = "DANISH"
+  word = "DAN"
   collectableCount = #word
   hint = "Gameplay programmer's nickname"
   
@@ -291,7 +291,6 @@ function love.update(dt)
 end
 
 function love.draw()
-  
   if gamestate == "easy" then
     level1()
   end

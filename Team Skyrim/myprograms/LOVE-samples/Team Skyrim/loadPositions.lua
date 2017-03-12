@@ -12,32 +12,32 @@ function loadPositions()
       platform.Image = cloudAImage
       platform.Width = cloudAImage:getWidth() * scaleX * boxScaler -- constant; platform's width
       platform.Height = cloudAImage:getHeight() * scaleY * boxScaler -- constant; platform's height
-      platform.X = love.graphics.getWidth() / 9.23076923 -- platform's x co-ordinate -- 52
-      platform.Y = love.graphics.getHeight() / 2.4 -- platform's y co-ordinate -- 200
+      platform.X = love.graphics.getWidth() / 7.78846153 -- platform's x co-ordinate -- 34.66666666
+      platform.Y = love.graphics.getHeight() / 3.6 -- platform's y co-ordinate -- 133.33333333
     elseif i == 2 then
       platform.Image = cloudBImage
       platform.Width = cloudBImage:getWidth() * scaleX * boxScaler -- constant; platform's width
       platform.Height = cloudBImage:getHeight() * scaleY * boxScaler -- constant; platform's height
-      platform.X = love.graphics.getWidth() / 1.35 -- platform's x co-ordinate -- 200
-      platform.Y = love.graphics.getHeight() / 1.92 -- platform's y co-ordinate -- 250
+      platform.X = love.graphics.getWidth() / 2.32758620 -- platform's x co-ordinate -- 116
+      platform.Y = love.graphics.getHeight() / 2.65682656 -- platform's y co-ordinate -- 180.66666666
     elseif i == 3 then
       platform.Image = cloudCImage
       platform.Width = cloudCImage:getWidth() * scaleX * boxScaler -- constant; platform's width
       platform.Height = cloudCImage:getHeight() * scaleY * boxScaler -- constant; platform's height
-      platform.X = love.graphics.getWidth() / 1.35 -- platform's x co-ordinate -- 200
-      platform.Y = love.graphics.getHeight() / 1.92 -- platform's y co-ordinate -- 250
+      platform.X = love.graphics.getWidth() / 1.30225080 -- platform's x co-ordinate -- 207.33333333
+      platform.Y = love.graphics.getHeight() / 1.96185286 -- platform's y co-ordinate -- 244.66666666
     elseif i == 4 then
       platform.Image = swingImage
       platform.Width = swingImage:getWidth() * scaleX * boxScaler -- constant; platform's width
       platform.Height = swingImage:getHeight() * scaleY * boxScaler -- constant; platform's height
-      platform.X = love.graphics.getWidth() / 1.35 -- platform's x co-ordinate -- 200
-      platform.Y = love.graphics.getHeight() / 1.92 -- platform's y co-ordinate -- 250
+      platform.X = love.graphics.getWidth() / 12.65625 -- platform's x co-ordinate -- 21.33333333
+      platform.Y = love.graphics.getHeight() / 1.51898734 -- platform's y co-ordinate -- 316
     elseif i == 5 then
       platform.Image = swingImage
       platform.Width = swingImage:getWidth() * scaleX * boxScaler -- constant; platform's width
       platform.Height = swingImage:getHeight() * scaleY * boxScaler -- constant; platform's height
-      platform.X = love.graphics.getWidth() / 1.35 -- platform's x co-ordinate -- 200
-      platform.Y = love.graphics.getHeight() / 1.92 -- platform's y co-ordinate -- 250
+      platform.X = love.graphics.getWidth() / 1.875 -- platform's x co-ordinate -- 144
+      platform.Y = love.graphics.getHeight() / 1.69014084 -- platform's y co-ordinate -- 284
     end
     
     platform.GroundFound = false -- used for ground check

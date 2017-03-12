@@ -148,36 +148,41 @@ function PlayerSprite() -- animate the player using the spritesheets
 end
 
 function CheckCollectables() -- function checks if any collectables have been collected
+  local collected = false
+  
   if correctLetterOrder then -- collectables can only be collected if all letters have been collected in the correct order
-    for i,v in ipairs(collectables) do
-      local hitTest = CheckCollision(v.X, v.Y, v.Width, v.Height, pX, pY, pWidth, pHeight)
-      if hitTest then
-        letter = {}
-        letter.Letter = v.Letter
-        if letter.Letter == nextLetter then
-          table.remove(collectables, i)
-          letter.CorrectOrder = true
-          letter.Image = v.Image
-          letterCount = letterCount + 1
-          collectableCount = collectableCount - 1
-          
-          if next(collectables) ~= nil then
-            local first = true
-            for i,v in ipairs(collectables) do
-              if first then
-                nextLetter = v.Letter
-                first = false
+    if collected == false then
+      for i,v in ipairs(collectables) do
+        local hitTest = CheckCollision(v.X, v.Y, v.Width, v.Height, pX, pY, pWidth, pHeight)
+        if hitTest then
+          collected = true
+          letter = {}
+          letter.Letter = v.Letter
+          if letter.Letter == nextLetter then
+            table.remove(collectables, i)
+            letter.CorrectOrder = true
+            letter.Image = v.Image
+            letterCount = letterCount + 1
+            collectableCount = collectableCount - 1
+            
+            if next(collectables) ~= nil then
+              local first = true
+              for i,v in ipairs(collectables) do
+                if first then
+                  nextLetter = v.Letter
+                  first = false
+                end
               end
             end
+            
+          else
+            v.CorrectOrder = false
+            letter.CorrectOrder = false
+            correctLetterOrder = false
+            table.remove(stars)
           end
-          
-        else
-          v.CorrectOrder = false
-          letter.CorrectOrder = false
-          correctLetterOrder = false
-          table.remove(stars)
+          table.insert(letters, letter)
         end
-        table.insert(letters, letter)
       end
     end
   end
