@@ -39,6 +39,12 @@ function PlayerMove() -- function moves player left or right
     pDirection = 1
     pX = pX + pSpeed
   end
+  
+  if pX < 0 then
+    pX = 0
+  elseif pX > love.graphics.getWidth() - pWidth then
+    pX = love.graphics.getWidth() - pWidth
+  end
 end
 
 function PlayerJump() -- function makes player rises after a jump input

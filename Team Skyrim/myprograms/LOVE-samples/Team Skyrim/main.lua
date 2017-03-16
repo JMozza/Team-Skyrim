@@ -177,7 +177,7 @@ function love.load()
   pX = 0 -- player's x co-ordinate
   pY = pGround - pHeight -- player's y co-ordinate
   pDirection = 1 -- 0 for left, 1 for right
-  pJumpHeight = 20 * scaleX -- constant; pixels the player rises in the first frame of a jump
+  pJumpHeight = 15 * scaleX -- constant; pixels the player rises in the first frame of a jump
   pGravity = 2 * scaleX -- constant; force due to gravity acting on player
   pHeightFromJump = 0 -- pixels player is rising on current frame
   pMovingLeft = false -- true if player is being instructed to move left
@@ -274,8 +274,8 @@ function love.update(dt)
     end
     
     CheckCollectables()
-    CheckLeftWalls()
-    CheckRightWalls()
+    --CheckLeftWalls()
+    --CheckRightWalls()
   end
   
   -----------------Physics-------------

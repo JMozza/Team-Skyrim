@@ -35,7 +35,7 @@ function mousePress(x, y)
           pMovingRight = false
           if pY == pGround - pHeight then
             pState = 1
-            pHeightFromJump = 20
+            pHeightFromJump = pJumpHeight
           end
         end
       else
@@ -117,7 +117,7 @@ function touchPress(x, y)
             pMovingRight = false
             if pY == pGround - pHeight then
               pState = 1
-              pHeightFromJump = 20
+              pHeightFromJump = pJumpHeight
             end
           end
         else
