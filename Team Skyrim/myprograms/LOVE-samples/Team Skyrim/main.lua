@@ -196,7 +196,7 @@ function love.load()
   boxScaler = 2 / 3
   
   -- different letter lengths
-  word = "DAN"
+  word = "TENLETTERS"
   collectableCount = #word
   hint = "Gameplay programmer's nickname"
   

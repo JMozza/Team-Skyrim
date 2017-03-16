@@ -157,22 +157,45 @@ function CheckCollectables() -- function checks if any collectables have been co
   local collected = false
   
   if correctLetterOrder then -- collectables can only be collected if all letters have been collected in the correct order
-    if collected == false then
-      for i,v in ipairs(collectables) do
-        local hitTest = CheckCollision(v.X, v.Y, v.Width, v.Height, pX, pY, pWidth, pHeight)
-        if hitTest then
+    for i,v in ipairs(collectables) do
+      local hitTest = CheckCollision(v.X, v.Y, v.Width, v.Height, pX, pY, pWidth, pHeight)
+      if hitTest then
+        if collected == false then
           collected = true
           letter = {}
           letter.Letter = v.Letter
           if letter.Letter == nextLetter then
-            table.remove(collectables, i)
+            local remove = false
+            local x = 0
+            local y = 0
+            local object = 0
+            
+            for i,v in ipairs(collectables) do
+              if v.Letter == nextLetter then
+                if remove == false then
+                  remove = true
+                  x = v.X
+                  y = v.Y
+                  object = v.Object
+                  table.remove(collectables, i)
+                end
+              end
+            end
+            
             letter.CorrectOrder = true
             letter.Image = v.Image
-            letterCount = letterCount + 1
             collectableCount = collectableCount - 1
+            letterCount = letterCount + 1
+            if letterCount >= 6 then
+              --make letters smaller
+            end
             
-            if next(collectables) ~= nil then
+            if collectables[1] ~= nil then
+              v.X = x
+              v.Y = y
+              v.Object = object
               local first = true
+              
               for i,v in ipairs(collectables) do
                 if first then
                   nextLetter = v.Letter
@@ -180,7 +203,6 @@ function CheckCollectables() -- function checks if any collectables have been co
                 end
               end
             end
-            
           else
             v.CorrectOrder = false
             letter.CorrectOrder = false
