@@ -1,6 +1,6 @@
 function level1()
   love.graphics.draw(gamebackground, 0, 0, 0, spriteScalerX, spriteScalerY)
-  love.graphics.setFont(font_50)
+  --love.graphics.setFont(font_50)
   
   for i,v in ipairs(collectables) do
     if v.CorrectOrder then
@@ -14,10 +14,10 @@ function level1()
   
   for i,v in ipairs(letters) do
     if v.CorrectOrder then
-      love.graphics.draw(v.Image, (i - 1) * 50, 400, 0, spriteScalerX, spriteScalerY)
+      love.graphics.draw(v.Image, (i - 1) * letterLengthOfSide, 400, 0, spriteScalerX * letterLengthOfSide / AImage:getWidth(), spriteScalerY * letterLengthOfSide / AImage:getHeight())
     else
-      love.graphics.draw(incorrectLetterImage, (i - 1) * 50, 400, 0, spriteScalerX, spriteScalerY)
-      love.graphics.print(v.Letter, (i - 1) * 50, 400)
+      love.graphics.draw(incorrectLetterImage, (i - 1) * letterLengthOfSide, 400, 0, spriteScalerX * letterLengthOfSide / AImage:getWidth(), spriteScalerY * letterLengthOfSide / AImage:getHeight())
+      love.graphics.print(v.Letter, (i - 1) * letterLengthOfSide, 400)
     end
   end
   

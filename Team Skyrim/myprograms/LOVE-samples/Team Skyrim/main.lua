@@ -80,7 +80,7 @@ function love.load()
   font = love.graphics.newFont("fonts/goodd.ttf", 28 * scaleX)
   optionfont = love.graphics.newFont("fonts/goodd.ttf", 12 * scaleX)
   subtitlefont = love.graphics.newFont("fonts/goodd.ttf", 34 * scaleX)
-  font_12 = love.graphics.newFont(12* scaleX)
+  font_12 = love.graphics.newFont(12 * scaleX)
   font_50 = love.graphics.newFont(50)
 
   --Animation Variables
@@ -203,6 +203,7 @@ function love.load()
   -- variables for collected letters
   letters = {} -- collected letters
   letterCount = 0 -- amount of letters
+  letterLengthOfSide = love.graphics.getWidth() / 5 -- size of letter
   correctLetterOrder = true -- true if all letters have currently been collected in the correct order
   incorrectLetterImage = love.graphics.newImage("sprites/Placeholder4.png")
   

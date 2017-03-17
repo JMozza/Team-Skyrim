@@ -3,10 +3,10 @@ function mousePress(x, y)
     local letterTouched = false
     for i,v in ipairs(letters) do
       if v.CorrectOrder == false then
-        if y <= 450 then
-          if y > 400 then
-            if x > letterCount * 50 then
-              if x <= letterCount * 50 + 50 then
+        if y < pGround + letterLengthOfSide then
+          if y >= pGround then
+            if x >= letterCount * letterLengthOfSide then -- change depending on whether 5 have been collected or not
+              if x < (letterCount + 1) * letterLengthOfSide then
                 correctLetterOrder = true
                 for i,v in ipairs(collectables) do
                   if v.CorrectOrder == false then
@@ -15,6 +15,9 @@ function mousePress(x, y)
                 end
                 table.remove(letters, i)
                 letterTouched = true
+                if letterCount >= 5 then
+                  letterLengthOfSide = love.graphics.getWidth() / letterCount
+                end
               end
             end
           end
@@ -97,6 +100,9 @@ function touchPress(x, y)
                   end
                   table.remove(letters, i)
                   letterTouched = true
+                  if letterCount >= 5 then
+                    letterLengthOfSide = love.graphics.getWidth() / letterCount
+                  end
                 end
               end
             end
