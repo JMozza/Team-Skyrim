@@ -221,8 +221,6 @@ function love.load()
   
   spriteScalerX = 1 * scaleX
   spriteScalerY = 1 * scaleY
-  yPressCheckBottom = 450 * scaleY
-  yPressCheckTop = 400 * scaleY
   
   hastouched = false
   

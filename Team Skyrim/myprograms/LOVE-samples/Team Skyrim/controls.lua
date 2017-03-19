@@ -3,9 +3,9 @@ function mousePress(x, y)
     local letterTouched = false
     for i,v in ipairs(letters) do
       if v.CorrectOrder == false then
-        if y < pGround + letterLengthOfSide then
-          if y >= pGround then
-            if x >= letterCount * letterLengthOfSide then -- change depending on whether 5 have been collected or not
+        if y < love.graphics.getHeight() * 5 / 6 + letterLengthOfSide then
+          if y >= love.graphics.getHeight() * 5 / 6 then
+            if x >= letterCount * letterLengthOfSide then
               if x < (letterCount + 1) * letterLengthOfSide then
                 correctLetterOrder = true
                 for i,v in ipairs(collectables) do
@@ -15,8 +15,8 @@ function mousePress(x, y)
                 end
                 table.remove(letters, i)
                 letterTouched = true
-                if letterCount >= 5 then
-                  letterLengthOfSide = love.graphics.getWidth() / letterCount
+                if letterCount >= 4 then
+                  letterLengthOfSide = love.graphics.getWidth() / (letterCount + 1)
                 end
               end
             end
@@ -88,10 +88,10 @@ function touchPress(x, y)
       objects.block2.body:applyLinearImpulse(520, -2000)
       for i,v in ipairs(letters) do
         if v.CorrectOrder == false then
-          if y * love.graphics.getHeight() <= yPressCheckBottom then
-            if y * love.graphics.getHeight() > yPressCheckTop then
-              if x * love.graphics.getWidth() > (letterOrder * 50 * scaleX) then
-                if x * love.graphics.getWidth() <= (letterOrder * 50 + 50) * scaleX then
+          if y * love.graphics.getHeight() < (love.graphics.getHeight() * 5 / 6 + letterLengthOfSide) * scaleY then
+            if y * love.graphics.getHeight() >= (love.graphics.getHeight() * 5 / 6) * scaleY then
+              if x * love.graphics.getWidth() >= letterCount * letterLengthOfSide * scaleX then
+                if x * love.graphics.getWidth() < (letterCount + 1) * letterLengthOfSide * scaleX then
                   correctLetterOrder = true
                   for i,v in ipairs(collectables) do
                     if v.CorrectOrder == false then
@@ -100,8 +100,8 @@ function touchPress(x, y)
                   end
                   table.remove(letters, i)
                   letterTouched = true
-                  if letterCount >= 5 then
-                    letterLengthOfSide = love.graphics.getWidth() / letterCount
+                  if letterCount >= 4 then
+                    letterLengthOfSide = love.graphics.getWidth() / (letterCount + 1)
                   end
                 end
               end

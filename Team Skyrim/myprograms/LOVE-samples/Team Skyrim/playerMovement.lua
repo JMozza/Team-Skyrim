@@ -187,8 +187,8 @@ function CheckCollectables() -- function checks if any collectables have been co
             collectableCount = collectableCount - 1
             letterCount = letterCount + 1
             
-            if letterCount >= 6 then
-              letterLengthOfSide = love.graphics.getWidth() / letterCount
+            if letterCount >= 5 then
+              letterLengthOfSide = love.graphics.getWidth() / (letterCount + 1)
             end
             
             if collectables[1] ~= nil then
@@ -205,8 +205,8 @@ function CheckCollectables() -- function checks if any collectables have been co
               end
             end
           else
-            if letterCount >= 5 then
-              letterLengthOfSide = love.graphics.getWidth() / (letterCount + 1)
+            if letterCount >= 4 then
+              letterLengthOfSide = love.graphics.getWidth() / (letterCount + 2)
             end
             
             v.CorrectOrder = false
