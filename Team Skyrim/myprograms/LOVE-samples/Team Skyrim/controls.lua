@@ -41,7 +41,7 @@ function mousePress(x, y)
             pHeightFromJump = pJumpHeight
           end
         end
-      else
+      elseif y < ((love.graphics.getHeight() / 3) * 2 + 80) then
         if pState == 0 then -- fall through a platform
           pHeightFromJump = -1
           pY = pY - pHeightFromJump
@@ -81,11 +81,6 @@ function touchPress(x, y)
   if hastouched == true then
     if gamestate == "easy" then
       local letterTouched = false
-      startCount = 1
-      objects.block1.body:applyAngularImpulse(-550)
-      objects.block1.body:applyLinearImpulse(-535, -2000)
-      objects.block2.body:applyAngularImpulse(555)
-      objects.block2.body:applyLinearImpulse(520, -2000)
       for i,v in ipairs(letters) do
         if v.CorrectOrder == false then
           if y * love.graphics.getHeight() < (love.graphics.getHeight() * 5 / 6 + letterLengthOfSide) * scaleY then
@@ -126,7 +121,7 @@ function touchPress(x, y)
               pHeightFromJump = pJumpHeight
             end
           end
-        else
+        elseif (y * love.graphics.getHeight()) < ((love.graphics.getHeight() / 3) * 2 + 80) then
           if pState == 0 then -- fall through a platform
             pHeightFromJump = -1
             pY = pY - pHeightFromJump
