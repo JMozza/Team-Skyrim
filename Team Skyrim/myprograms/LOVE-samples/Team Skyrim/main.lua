@@ -11,6 +11,7 @@ require "controls"
 require "level_1"
 require "loadPositions"
 require "finishedScreenDraw"
+require "randomPositions"
 
 function love.load()  
   math.randomseed(os.time()) -- needed for random generation
