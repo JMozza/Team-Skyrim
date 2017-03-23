@@ -1,4 +1,7 @@
 function loadPositions()
+  usedXPos = {}
+  usedYPos = {}
+  
   for i = 0, 5 do
     platform = {} -- new platform
     
@@ -48,8 +51,6 @@ function loadPositions()
     collectable = {} -- new collectable
     collectable.Width = AImage:getWidth() * scaleX -- constant; collectable's width
     collectable.Height = AImage:getHeight() * scaleY -- constant; collectable's height
-    widthGen(0, 200) -- set these to the start and end of the platforms
-    heightGen(0, 200)
     
     if i == 1 then
       collectable.X = 0
@@ -58,8 +59,13 @@ function loadPositions()
       collectable.X = 0
       collectable.Y = 0
     else
-      collectable.X = random -- this calls a random function with the start and end x and y passed in above
-      collectable.Y =  random * 2 -- collectable's y co-ordinate
+      collectable.X = 10 + (math.random(0,4) * 50) -- this calls a random function with the start and end x and y passed in above
+      
+      if collectable.X == 10 then
+        collectable.Y = math.random(3,6) * 50
+      else
+        collectable.Y = math.random(3, 7) * 50-- collectable's y co-ordinate
+      end
     end
     
     collectable.Object = i
@@ -121,6 +127,24 @@ function loadPositions()
       collectable.Image = YImage -- image of the letter
     elseif collectable.Letter == "Z" then
       collectable.Image = ZImage -- image of the letter
+    end
+    
+    if i > 2 then
+      while validateRandom(collectable.X, collectable.Y) == false do
+        if i == 1 then
+          collectable.X = 0
+          collectable.Y = 0
+        elseif i == 2 then
+          collectable.X = 0
+          collectable.Y = 0
+        else
+          if collectable.X == 10 then
+            collectable.Y = math.random(3,6) * 50
+          else
+            collectable.Y = math.random(3, 7) * 50-- collectable's y co-ordinate
+          end
+        end
+      end
     end
     
     table.insert(collectables, collectable)
