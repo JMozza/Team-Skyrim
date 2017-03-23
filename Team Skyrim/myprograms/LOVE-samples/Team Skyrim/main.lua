@@ -196,9 +196,9 @@ function love.load()
   boxScaler = 2 / 3
   
   -- different letter lengths
-  word = "TENLETTERS"
+  word = "GAMES"
   collectableCount = #word
-  hint = "Gameplay programmer's nickname"
+  hint = "Fun to play"
   
   -- variables for collected letters
   letters = {} -- collected letters
