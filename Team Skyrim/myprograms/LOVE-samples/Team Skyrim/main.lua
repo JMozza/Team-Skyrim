@@ -29,7 +29,6 @@ function love.load()
   end
   
   --variables for collectables
-  collectables = {} -- collectables on the screen
   AImage = love.graphics.newImage("sprites/Props/Letters/A.png")
   BImage = love.graphics.newImage("sprites/Props/Letters/B.png")
   CImage = love.graphics.newImage("sprites/Props/Letters/C.png")
@@ -116,10 +115,52 @@ function love.load()
   --pButton_spawn(160,70, "Return To Menu","2")
   --pButton_spawn(460,70, "Quit","3")
 
-  --volume control variables (unused vriables at the moment, allow volume control in the options menu)
+  --volume control variables (unused variables at the moment, allow volume control in the options menu)
   v_music = 1
   v_effects = 1
- 
+  
+  -- variables for game
+  --gameState = 1 -- 0 for main menu, 1 for in a game mode, 2 for level completion, add game state definitions here
+  gameMode = 0 -- 0 for english, 1 for maths, 2 for science
+  level = 0 -- level the player is on
+  
+  pSpeed = 3 * scaleX-- constant; player's speed
+  pWidth = 48 * scaleX -- constant; player's width
+  pHeight = 96 * scaleY -- constant; player's height
+  pSpriteWidth = 48 -- constant; player's width for sprites from spritesheets
+  pSpriteHeight = 96 -- constant; player's height for sprites from spritesheets
+  pJumpHeight = 15 * scaleX -- constant; pixels the player rises in the first frame of a jump
+  pGravity = 2 * scaleX -- constant; force due to gravity acting on player
+  
+  rainbowImage = love.graphics.newImage("sprites/New backgrounds/boxRAINBOW.png")
+  cloudAImage = love.graphics.newImage("sprites/New backgrounds/boxCLOUDa.png")
+  cloudBImage = love.graphics.newImage("sprites/New backgrounds/boxCLOUDb.png")
+  cloudCImage = love.graphics.newImage("sprites/New backgrounds/boxCLOUDc.png")
+  swingImage = love.graphics.newImage("sprites/New backgrounds/boxSWING.png")
+  boxScaler = 2 / 3
+  
+  incorrectLetterImage = love.graphics.newImage("sprites/Placeholder4.png")
+  
+  starImage = love.graphics.newImage("sprites/Placeholder5.png")
+  
+  gameCoinsCollected = 0 -- amount of coins the player has collected throughout the game
+  coinImage = love.graphics.newImage("sprites/checkbox.png")
+  
+  spriteScalerX = 1 * scaleX
+  spriteScalerY = 1 * scaleY
+  
+  Reset()
+  
+  hastouched = false
+  
+  love.window.setMode(width * scaleX, height * scaleY)
+end
+
+function Reset()
+  level = level + 1
+  
+  collectables = {} -- collectables on the screen
+  
   --------------------------Physics--------------------------------
   love.physics.setMeter(64)
   world = love.physics.newWorld(0, 9.81*64, true)
@@ -160,26 +201,15 @@ function love.load()
   --objects.character.f:setUserData("Character") for data output
   --------------------------Physics--------------------------------
   
-  -- variables for game
-  --gameState = 1 -- 0 for main menu, 1 for in a game mode, 2 for level completion, add game state definitions here
-  gameMode = 0 -- 0 for english, 1 for maths, 2 for science
-  
   -- variables for player
   pState = 0 -- 0 for standing, 1 for jumping, 2 for falling, add player state definitions here
   pSprite = 0 -- sprite from spritesheet player is on on current frame
   pMovingState = 0 -- 0 for idle, 1 for walking left, 2 for walking right
   pJumpingState = 0 --- 0 for left, 1 for right
-  pSpeed = 3 * scaleX-- constant; player's speed
   pGround = love.graphics.getHeight() * 5 / 6 -- height of the ground the player is currently over
-  pWidth = 48 * scaleX -- constant; player's width
-  pHeight = 96 * scaleY -- constant; player's height
-  pSpriteWidth = 48 -- constant; player's width for sprites from spritesheets
-  pSpriteHeight = 96 -- constant; player's height for sprites from spritesheets
   pX = 0 -- player's x co-ordinate
   pY = pGround - pHeight -- player's y co-ordinate
   pDirection = 1 -- 0 for left, 1 for right
-  pJumpHeight = 15 * scaleX -- constant; pixels the player rises in the first frame of a jump
-  pGravity = 2 * scaleX -- constant; force due to gravity acting on player
   pHeightFromJump = 0 -- pixels player is rising on current frame
   pMovingLeft = false -- true if player is being instructed to move left
   pMovingRight = false -- true if player is being instructed to move right
@@ -189,43 +219,68 @@ function love.load()
   
   -- variables for platforms
   platforms = {}
-  rainbowImage = love.graphics.newImage("sprites/New backgrounds/boxRAINBOW.png")
-  cloudAImage = love.graphics.newImage("sprites/New backgrounds/boxCLOUDa.png")
-  cloudBImage = love.graphics.newImage("sprites/New backgrounds/boxCLOUDb.png")
-  cloudCImage = love.graphics.newImage("sprites/New backgrounds/boxCLOUDc.png")
-  swingImage = love.graphics.newImage("sprites/New backgrounds/boxSWING.png")
-  boxScaler = 2 / 3
   
   -- different letter lengths
-  word = "GAMES"
+  if level == 1 then
+    word = "GAMES"
+    hint = "Fun to play"
+  elseif level == 2 then
+    word = "DICKS"
+    hint = "Kinda phallic"
+  else
+    word = "ECKSDEE"
+    hint = "xD"
+  end
+  
   collectableCount = #word
-  hint = "Fun to play"
   
   -- variables for collected letters
   letters = {} -- collected letters
   letterCount = 0 -- amount of letters
   letterLengthOfSide = (love.graphics.getWidth() / 5) *scaleX -- size of letter
   correctLetterOrder = true -- true if all letters have currently been collected in the correct order
-  incorrectLetterImage = love.graphics.newImage("sprites/Placeholder4.png")
   
   -- variables for stars
   stars = {} -- stars earned. every round starts with 3 stars. stars get taken away for errors and are presented at the end of a level
-  starImage = love.graphics.newImage("sprites/Placeholder5.png")
   
   -- variables for coins
   coins = {} -- coins collected since the game started
   stageCoinsCollected = 0 -- amount of coins the player has collected in the stage
-  gameCoinsCollected = 0 -- amount of coins the player has collected throughout the game
-  coinImage = love.graphics.newImage("sprites/checkbox.png")
   
   loadPositions()
-  
-  spriteScalerX = 1 * scaleX
-  spriteScalerY = 1 * scaleY
-  
-  hastouched = false
-  
-  love.window.setMode(width * scaleX, height * scaleY)
+end
+
+function Delete()
+  for i,v in ipairs(collectables) do
+    collectables[i] = nil
+  end
+  for i,v in ipairs(objects.platform1) do
+    objects.platform1[i] = nil
+  end
+  for i,v in ipairs(objects.platform2) do
+    objects.platform2[i] = nil
+  end
+  for i,v in ipairs(objects.block1) do
+    objects.block1[i] = nil
+  end
+  for i,v in ipairs(objects.block2) do
+    objects.block2[i] = nil
+  end
+  for i,v in ipairs(objects) do
+    objects[i] = nil
+  end
+  for i,v in ipairs(platforms) do
+    platforms[i] = nil
+  end
+  for i,v in ipairs(letters) do
+    letters[i] = nil
+  end
+  for i,v in ipairs(stars) do
+    stars[i] = nil
+  end
+  for i,v in ipairs(coins) do
+    coins[i] = nil
+  end
 end
 
 function love.update(dt)
@@ -281,11 +336,12 @@ function love.update(dt)
   -----------------Physics-------------
   if startCount == 1 then
     world:update(dt)
-     --this puts the world into motion
+    --this puts the world into motion
   end
   -----------------Physics-------------
   
   if collectableCount == 0 then -- level complete
+    Delete()
     gamestate = "easyComplete"
   end
 end

@@ -70,6 +70,11 @@ function mousePress(x, y)
   if gamestate == "options" then
     oButton_click(x,y)
   end
+  
+  if gamestate == "easyComplete" then
+    gamestate = "easy"
+    Reset()
+  end
 end
 
 function mouseReleased()
@@ -154,6 +159,12 @@ function touchPress(x, y)
     
     if gamestate == "options" then
       oButton_click(x * love.graphics.getWidth(),y * love.graphics.getHeight())
+      hastouched =true
+    end
+    
+    if gamestate == "easyComplete" then
+      gamestate = "easy"
+      Reset()
       hastouched =true
     end
   end
