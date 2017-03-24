@@ -59,12 +59,12 @@ function loadPositions()
       collectable.X = 0
       collectable.Y = 0
     else
-      collectable.X = 10 + (math.random(0,4) * 50) -- this calls a random function with the start and end x and y passed in above
+      collectable.X = 10 + (math.random(0,4) * 50) * scaleX-- this calls a random function with the start and end x and y passed in above
       
       if collectable.X == 10 then
-        collectable.Y = math.random(3,6) * 50
+        collectable.Y = math.random(3,6) * 50 *scaleY
       else
-        collectable.Y = math.random(3, 7) * 50-- collectable's y co-ordinate
+        collectable.Y = math.random(3, 7) * 50 *scaleY-- collectable's y co-ordinate
       end
     end
     
@@ -139,9 +139,9 @@ function loadPositions()
           collectable.Y = 0
         else
           if collectable.X == 10 then
-            collectable.Y = math.random(3,6) * 50
+            collectable.Y = math.random(3,6) * 50 * scaleY
           else
-            collectable.Y = math.random(3, 7) * 50-- collectable's y co-ordinate
+            collectable.Y = math.random(3, 7) * 50 * scaleY-- collectable's y co-ordinate
           end
         end
       end

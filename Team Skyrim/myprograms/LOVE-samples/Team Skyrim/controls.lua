@@ -41,7 +41,7 @@ function mousePress(x, y)
             pHeightFromJump = pJumpHeight
           end
         end
-      elseif y < ((love.graphics.getHeight() / 3) * 2 + 80) then
+      elseif y < ((love.graphics.getHeight() / 3) * 2 + (love.graphics.getHeight() / 6)) then
         if pState == 0 then -- fall through a platform
           pHeightFromJump = -1
           pY = pY - pHeightFromJump
@@ -83,10 +83,10 @@ function touchPress(x, y)
       local letterTouched = false
       for i,v in ipairs(letters) do
         if v.CorrectOrder == false then
-          if y * love.graphics.getHeight() < (love.graphics.getHeight() * 5 / 6 + letterLengthOfSide) * scaleY then
-            if y * love.graphics.getHeight() >= (love.graphics.getHeight() * 5 / 6) * scaleY then
-              if x * love.graphics.getWidth() >= letterCount * letterLengthOfSide * scaleX then
-                if x * love.graphics.getWidth() < (letterCount + 1) * letterLengthOfSide * scaleX then
+          if y * love.graphics.getHeight() < (love.graphics.getHeight() * 5 / 6 + letterLengthOfSide) * scaleY * scaleX then
+            if y * love.graphics.getHeight() >= (love.graphics.getHeight() * 5 / 6) * scaleY * scaleX then
+              if x * love.graphics.getWidth() >= letterCount * letterLengthOfSide * scaleX * scaleX then
+                if x * love.graphics.getWidth() < (letterCount + 1) * letterLengthOfSide * scaleX * scaleX then
                   correctLetterOrder = true
                   for i,v in ipairs(collectables) do
                     if v.CorrectOrder == false then
@@ -118,10 +118,10 @@ function touchPress(x, y)
             pMovingRight = false
             if pY == pGround - pHeight then
               pState = 1
-              pHeightFromJump = pJumpHeight
+              pHeightFromJump = 20
             end
           end
-        elseif (y * love.graphics.getHeight()) < ((love.graphics.getHeight() / 3) * 2 + 80) then
+        elseif (y * love.graphics.getHeight()) < ((love.graphics.getHeight() / 3) * 2 + (love.graphics.getHeight() / 6)) then
           if pState == 0 then -- fall through a platform
             pHeightFromJump = -1
             pY = pY - pHeightFromJump

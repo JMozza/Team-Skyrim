@@ -14,9 +14,10 @@ function level1()
   
   for i,v in ipairs(letters) do
     if v.CorrectOrder then
-      love.graphics.draw(v.Image, (i - 1) * letterLengthOfSide, 400, 0, spriteScalerX * letterLengthOfSide / AImage:getWidth(), spriteScalerY * letterLengthOfSide / AImage:getHeight())
+      love.graphics.draw(v.Image, (i - 1) * letterLengthOfSide / scaleX, love.graphics.getHeight()/1.2, 0, (letterLengthOfSide / AImage:getWidth()) / spriteScalerX, (letterLengthOfSide / AImage:getHeight()) / spriteScalerY)
+      love.graphics.print((i - 1) * letterLengthOfSide, 0, 350 * scaleY)
     else
-      love.graphics.draw(incorrectLetterImage, (i - 1) * letterLengthOfSide, 400, 0, spriteScalerX * letterLengthOfSide / AImage:getWidth(), spriteScalerY * letterLengthOfSide / AImage:getHeight())
+      love.graphics.draw(incorrectLetterImage, (i - 1) * letterLengthOfSide / scaleX, love.graphics.getHeight()/1.2, 0, (letterLengthOfSide / AImage:getWidth()) / spriteScalerX, (letterLengthOfSide / AImage:getHeight()) / spriteScalerY)
       love.graphics.print(v.Letter, (i - 1) * letterLengthOfSide, 400)
     end
   end

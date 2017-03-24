@@ -204,7 +204,7 @@ function love.load()
   -- variables for collected letters
   letters = {} -- collected letters
   letterCount = 0 -- amount of letters
-  letterLengthOfSide = love.graphics.getWidth() / 5 -- size of letter
+  letterLengthOfSide = (love.graphics.getWidth() / 5) *scaleX -- size of letter
   correctLetterOrder = true -- true if all letters have currently been collected in the correct order
   incorrectLetterImage = love.graphics.newImage("sprites/Placeholder4.png")
   
@@ -265,11 +265,11 @@ function love.update(dt)
     
     for i,v in ipairs(collectables) do
       if v.Object == 1 then
-        v.X = objects.block1.body:getX() - 25
-        v.Y = objects.block1.body:getY() - 25
+        v.X = (objects.block1.body:getX() - 25) * scaleX
+        v.Y = (objects.block1.body:getY() - 25) * scaleY
       elseif v.Object == 2 then
-        v.X = objects.block2.body:getX() - 25
-        v.Y = objects.block2.body:getY() - 25
+        v.X = (objects.block2.body:getX() - 25) * scaleX
+        v.Y = (objects.block2.body:getY() - 25) * scaleY
       end
     end
     
