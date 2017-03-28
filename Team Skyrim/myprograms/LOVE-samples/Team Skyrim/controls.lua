@@ -74,6 +74,10 @@ function mousePress(x, y)
   if gamestate == "easyComplete" then
     gamestate = "easy"
     Reset()
+    objects.block1.body:applyAngularImpulse(-550)
+          objects.block1.body:applyLinearImpulse(-535, -2000)
+          objects.block2.body:applyAngularImpulse(555)
+          objects.block2.body:applyLinearImpulse(520, -2000)
   end
 end
 
