@@ -70,89 +70,174 @@ function PlayerFall() -- function makes player fall after falling off a ledge or
 end
 
 function PlayerSprite() -- animate the player using the spritesheets
-  if pState == 0 then
-    if pMovingLeft then
-      if pMovingState ~= 1 then
-        pSprite = 0
-        pFrames = 0
-      end
-      pMovingState = 1
-      pFrames = pFrames + 1
-      
-      if pFrames >= 15 then
-        pFrames = 0
-        pSprite = pSprite + 1
-        if pSprite >= 4 then
+  if charSel == 1 then 
+    if pState == 0 then
+      if pMovingLeft then
+        if pMovingState ~= 1 then
           pSprite = 0
+          pFrames = 0
         end
-      end
+        pMovingState = 1
+        pFrames = pFrames + 1
       
-      pImage = pWalkingLeftImage
-      pQuad = love.graphics.newQuad(pSprite * pSpriteWidth, 0, pSpriteWidth, pSpriteHeight, pImage:getWidth(), pImage:getHeight())
-    elseif pMovingRight then
-      if pMovingState ~= 2 then
-        pSprite = 0
-        pFrames = 0
-      end
-      pMovingState = 2
-      pFrames = pFrames + 1
+        if pFrames >= 15 then
+          pFrames = 0
+          pSprite = pSprite + 1
+          if pSprite >= 4 then
+            pSprite = 0
+          end
+        end
       
-      if pFrames >= 15 then
-        pFrames = 0
-        pSprite = pSprite + 1
-        if pSprite >= 4 then
+        pImage = pWalkingLeftImage
+        pQuad = love.graphics.newQuad(pSprite * pSpriteWidth, 0, pSpriteWidth, pSpriteHeight, pImage:getWidth(), pImage:getHeight())
+      elseif pMovingRight then
+        if pMovingState ~= 2 then
           pSprite = 0
+          pFrames = 0
         end
-      end
+        pMovingState = 2
+        pFrames = pFrames + 1
       
-      pImage = pWalkingRightImage
-      pQuad = love.graphics.newQuad(pSprite * pSpriteWidth, 0, pSpriteWidth, pSpriteHeight, pImage:getWidth(), pImage:getHeight())
+        if pFrames >= 15 then
+          pFrames = 0
+          pSprite = pSprite + 1
+          if pSprite >= 4 then
+            pSprite = 0
+          end
+        end
+      
+        pImage = pWalkingRightImage
+        pQuad = love.graphics.newQuad(pSprite * pSpriteWidth, 0, pSpriteWidth, pSpriteHeight, pImage:getWidth(), pImage:getHeight())
+      else
+        pMovingState = 0
+        pImage = pIdleImage
+        pQuad = love.graphics.newQuad(0, 0, pSpriteWidth, pSpriteHeight, pImage:getWidth(), pImage:getHeight())
+      end
     else
-      pMovingState = 0
-      pImage = pIdleImage
-      pQuad = love.graphics.newQuad(0, 0, pSpriteWidth, pSpriteHeight, pImage:getWidth(), pImage:getHeight())
+      if pDirection == 0 then
+        if pJumpingState ~= 0 then
+          pSprite = 0
+          pFrames = 0
+        end
+        pJumpingState = 0
+        pFrames = pFrames + 1
+        
+        if pFrames >= 5 then
+          pFrames = 0
+          pSprite = pSprite + 1
+          if pSprite >= 8 then
+            pSprite = 0
+          end
+        end
+      
+        pImage = pJumpingLeftImage
+        pQuad = love.graphics.newQuad(pSprite * pSpriteWidth, 0, pSpriteWidth, pSpriteHeight, pImage:getWidth(), pImage:getHeight())
+      else
+        if pJumpingState ~= 1 then
+          pSprite = 0
+          pFrames = 0
+        end
+        pJumpingState = 1
+        pFrames = pFrames + 1
+        
+        if pFrames >= 5 then
+          pFrames = 0
+          pSprite = pSprite + 1
+          if pSprite >= 8 then
+            pSprite = 0
+          end
+        end
+        
+        pImage = pJumpingRightImage
+        pQuad = love.graphics.newQuad(pSprite * pSpriteWidth, 0, pSpriteWidth, pSpriteHeight, pImage:getWidth(), pImage:getHeight())
+      end
     end
-  else
-    if pDirection == 0 then
-      if pJumpingState ~= 0 then
-        pSprite = 0
-        pFrames = 0
-      end
-      pJumpingState = 0
-      pFrames = pFrames + 1
-      
-      if pFrames >= 5 then
-        pFrames = 0
-        pSprite = pSprite + 1
-        if pSprite >= 8 then
+  end
+
+if charSel == 2 then
+  if pState == 0 then
+      if pMovingLeft then
+        if pMovingState ~= 1 then
           pSprite = 0
+          pFrames = 0
         end
-      end
+        pMovingState = 1
+        pFrames = pFrames + 1
       
-      pImage = pJumpingLeftImage
-      pQuad = love.graphics.newQuad(pSprite * pSpriteWidth, 0, pSpriteWidth, pSpriteHeight, pImage:getWidth(), pImage:getHeight())
+        if pFrames >= 15 then
+          pFrames = 0
+          pSprite = pSprite + 1
+          if pSprite >= 4 then
+            pSprite = 0
+          end
+        end
+      
+        pImage = testWalkLeft
+        pQuad = love.graphics.newQuad(pSprite * pSpriteWidth, 0, pSpriteWidth, pSpriteHeight, pImage:getWidth(), pImage:getHeight())
+      elseif pMovingRight then
+        if pMovingState ~= 2 then
+          pSprite = 0
+          pFrames = 0
+        end
+        pMovingState = 2
+        pFrames = pFrames + 1
+      
+        if pFrames >= 15 then
+          pFrames = 0
+          pSprite = pSprite + 1
+          if pSprite >= 4 then
+            pSprite = 0
+          end
+        end
+      
+        pImage = testWalkRight
+        pQuad = love.graphics.newQuad(pSprite * pSpriteWidth, 0, pSpriteWidth, pSpriteHeight, pImage:getWidth(), pImage:getHeight())
+      else
+        pMovingState = 0
+        pImage = testIdle
+        pQuad = love.graphics.newQuad(0, 0, pSpriteWidth, pSpriteHeight, pImage:getWidth(), pImage:getHeight())
+      end
     else
-      if pJumpingState ~= 1 then
-        pSprite = 0
-        pFrames = 0
-      end
-      pJumpingState = 1
-      pFrames = pFrames + 1
-      
-      if pFrames >= 5 then
-        pFrames = 0
-        pSprite = pSprite + 1
-        if pSprite >= 8 then
+      if pDirection == 0 then
+        if pJumpingState ~= 0 then
           pSprite = 0
+          pFrames = 0
         end
-      end
+        pJumpingState = 0
+        pFrames = pFrames + 1
+        
+        if pFrames >= 5 then
+          pFrames = 0
+          pSprite = pSprite + 1
+          if pSprite >= 8 then
+            pSprite = 0
+          end
+        end
       
-      pImage = pJumpingRightImage
-      pQuad = love.graphics.newQuad(pSprite * pSpriteWidth, 0, pSpriteWidth, pSpriteHeight, pImage:getWidth(), pImage:getHeight())
+        pImage = testJumpLeft
+        pQuad = love.graphics.newQuad(pSprite * pSpriteWidth, 0, pSpriteWidth, pSpriteHeight, pImage:getWidth(), pImage:getHeight())
+      else
+        if pJumpingState ~= 1 then
+          pSprite = 0
+          pFrames = 0
+        end
+        pJumpingState = 1
+        pFrames = pFrames + 1
+        
+        if pFrames >= 5 then
+          pFrames = 0
+          pSprite = pSprite + 1
+          if pSprite >= 8 then
+            pSprite = 0
+          end
+        end
+        
+        pImage = testJumpRight
+        pQuad = love.graphics.newQuad(pSprite * pSpriteWidth, 0, pSpriteWidth, pSpriteHeight, pImage:getWidth(), pImage:getHeight())
+      end
     end
   end
 end
-
 function CheckCollectables() -- function checks if any collectables have been collected
   local collected = false
   

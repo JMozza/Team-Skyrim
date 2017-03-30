@@ -76,6 +76,12 @@ function love.load()
   pJumpingRightImage = love.graphics.newImage("sprites/Characters/6___JumpingRight.png")
   pJumpingLeftImage = love.graphics.newImage("sprites/Characters/7___JumpingLeft.png")
   
+  testIdle = love.graphics.newImage("sprites/Characters/testIdle.png")
+  testWalkLeft = love.graphics.newImage("sprites/Characters/testWalkLeft.png")
+  testWalkRight = love.graphics.newImage("sprites/Characters/testWalkRight.png")
+  testJumpLeft = love.graphics.newImage("sprites/Characters/testJumpLeft.png")
+  testJumpRight = love.graphics.newImage("sprites/Characters/testJumpRight.png")
+  
   --fonts
   font = love.graphics.newFont("fonts/goodd.ttf", 28 * scaleX)
   optionfont = love.graphics.newFont("fonts/goodd.ttf", 12 * scaleX)
@@ -104,8 +110,15 @@ function love.load()
   oButton_spawn(64 * scaleX,250 * scaleY, "Toggle Sounds","6")
   oButton_spawn(72 * scaleX,330 * scaleY, "Visit Our Site","7")
 
+  --Variable for Character selection
+  charSel = 1
+
   --Character Selection Buttons
-  cButton_spawn(70 * scaleX,420 * scaleY, "Return To Menu","1")
+  cButton_spawn(70 * scaleX,430 * scaleY, "Return To Menu","1")
+  cButton_spawn(40 * scaleX,250 * scaleY, "Select","2")
+  cButton_spawn(160 * scaleX,250 * scaleY, "Select","3")
+  cButton_spawn(40 * scaleX,395 * scaleY, "Select","4")
+  cButton_spawn(160 * scaleX,395 * scaleY, "Select","5")
   
   --Scoreboard Menu Buttons
   sButton_spawn(70 * scaleX,420 * scaleY, "Return To Menu","1")
@@ -378,6 +391,9 @@ function love.draw()
     love.graphics.setFont(subtitlefont)
     love.graphics.print("Select your character", 20 *scaleX, 90 * scaleY)
     love.graphics.setColor(255,255,255)
+    charSelection()
+    love.graphics.draw(pIdleImage, 45, 144)
+    love.graphics.draw(testIdle, 166, 144)
     animation:draw(titleSpritesheet, 15, 15, 0, spriteScalerX, spriteScalerY)
     love.graphics.setColor(255,255,255)
   end
@@ -434,4 +450,19 @@ end
  
 function postSolve(a, b, coll, normalimpulse, tangentimpulse)
 end
+
+function charSelection()
+  if charSel == 1 then
+      love.graphics.rectangle("fill",30 * scaleX, 130 * scaleY, 80 * scaleX, 116 * scaleY)
+    end
+    if charSel == 2 then
+      love.graphics.rectangle("fill",150 * scaleX, 130 * scaleY, 80 * scaleX, 116 * scaleY)
+    end
+    if charSel == 3 then
+      love.graphics.rectangle("fill",30 * scaleX, 280 * scaleY, 80 * scaleX, 116 * scaleY)
+    end
+    if charSel == 4 then
+      love.graphics.rectangle("fill",150 * scaleX, 280 * scaleY, 80 * scaleX, 116 * scaleY)
+    end
+  end
 -------Physics------
