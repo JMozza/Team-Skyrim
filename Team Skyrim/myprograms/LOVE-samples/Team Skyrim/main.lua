@@ -14,6 +14,7 @@ require "finishedScreenDraw"
 require "randomPositions"
 
 function love.load()  
+  
   math.randomseed(os.time()) -- needed for random generation
   gamestate = "menu"
   --setting OS
@@ -263,6 +264,102 @@ function Reset()
   loadPositions()
 end
 
+function charReset()
+  gamestate = "menu"
+  
+  level = level + 1
+  
+  collectables = {} -- collectables on the screen
+  
+  --------------------------Physics--------------------------------
+  love.physics.setMeter(64)
+  world = love.physics.newWorld(0, 9.81*64, true)
+  world:setCallbacks(beginContact, endContact, preSolve, postSolve)
+  persisting = 0
+  
+  objects = {}
+  
+  objects.platform1 = {}
+  objects.platform1.body = love.physics.newBody(world, width/2+103, 251) 
+  objects.platform1.shape = love.physics.newRectangleShape(50, 1) 
+  objects.platform1.fixture = love.physics.newFixture(objects.platform1.body, objects.platform1.shape);
+  
+  objects.platform2 = {}
+  objects.platform2.body = love.physics.newBody(world, 80, 140) 
+  objects.platform2.shape = love.physics.newRectangleShape(50, 1) 
+  objects.platform2.fixture = love.physics.newFixture(objects.platform2.body, objects.platform2.shape);
+  
+  objects.block1 = {}
+  objects.block1.body = love.physics.newBody(world, width/2+176, -20, "dynamic") 
+  objects.block1.shape = love.physics.newRectangleShape(40, 40) 
+  objects.block1.fixture = love.physics.newFixture(objects.block1.body, objects.block1.shape, 1) 
+  objects.block1.fixture:setRestitution(0) --bounce
+  objects.block1.body:setMass(10)
+  
+  objects.block2 = {}
+  objects.block2.body = love.physics.newBody(world, -10, -210, "dynamic")
+  objects.block2.body = love.physics.newBody(world, -10, -210, "dynamic")
+  objects.block2.shape = love.physics.newRectangleShape(40, 40) 
+  objects.block2.fixture = love.physics.newFixture(objects.block2.body, objects.block2.shape, 1)
+  objects.block2.fixture:setRestitution(0) --bounce
+  objects.block2.body:setMass(10)
+  
+  --objects.character = {}
+  --objects.character.body = love.physics.newBody(world, pX, pY, "dynamic")
+  --objects.character.shape = love.physics.newRectangleShape(40, 40) 
+  --objects.character.fixture = love.physics.newFixture(objects.character.body, objects.character.shape, 1) 
+  --objects.character.f:setUserData("Character") for data output
+  --------------------------Physics--------------------------------
+  
+  -- variables for player
+  pState = 0 -- 0 for standing, 1 for jumping, 2 for falling, add player state definitions here
+  pSprite = 0 -- sprite from spritesheet player is on on current frame
+  pMovingState = 0 -- 0 for idle, 1 for walking left, 2 for walking right
+  pJumpingState = 0 --- 0 for left, 1 for right
+  pGround = love.graphics.getHeight() * 5 / 6 -- height of the ground the player is currently over
+  pX = 0 -- player's x co-ordinate
+  pY = pGround - pHeight -- player's y co-ordinate
+  pDirection = 1 -- 0 for left, 1 for right
+  pHeightFromJump = 0 -- pixels player is rising on current frame
+  pMovingLeft = false -- true if player is being instructed to move left
+  pMovingRight = false -- true if player is being instructed to move right
+  pFrames = 0 -- player's frame counter
+  pImage = pIdleImage -- current spritesheet in use
+  pQuad = love.graphics.newQuad(0, 0, pSpriteWidth, pSpriteHeight, pImage:getWidth(), pImage:getHeight())
+  
+  -- variables for platforms
+  platforms = {}
+  
+  -- different letter lengths
+  if level == 1 then
+    word = "GAMES"
+    hint = "Fun to play"
+  elseif level == 2 then
+    word = "DICKS"
+    hint = "Kinda phallic"
+  else
+    word = "ECKSDEE"
+    hint = "xD"
+  end
+  
+  collectableCount = #word
+  
+  -- variables for collected letters
+  letters = {} -- collected letters
+  letterCount = 0 -- amount of letters
+  letterLengthOfSide = (love.graphics.getWidth() / 5) *scaleX -- size of letter
+  correctLetterOrder = true -- true if all letters have currently been collected in the correct order
+  
+  -- variables for stars
+  stars = {} -- stars earned. every round starts with 3 stars. stars get taken away for errors and are presented at the end of a level
+  
+  -- variables for coins
+  coins = {} -- coins collected since the game started
+  stageCoinsCollected = 0 -- amount of coins the player has collected in the stage
+  
+  loadPositions()
+end
+
 function Delete()
   for i,v in ipairs(collectables) do
     collectables[i] = nil
@@ -321,7 +418,7 @@ function love.update(dt)
   end
     
   if gamestate == "easy" and love.keyboard.isDown("return") then
-    gamestate = "menu"
+    charReset()
   end
   
   if gamestate == "easy" then
@@ -435,21 +532,6 @@ end
 function love.touchreleased( id, x, y, dx, dy, pressure )
   touchReleased()
 end
--------Physics------
-function beginContact(a, b, coll)
-  x,y = coll:getNormal()
-end
- 
-function endContact(a, b, coll)
-  persisting = 0
-end
- 
-function preSolve(a, b, coll)
-  persisting = persisting + 1
-end
- 
-function postSolve(a, b, coll, normalimpulse, tangentimpulse)
-end
 
 function charSelection()
   if charSel == 1 then
@@ -465,4 +547,20 @@ function charSelection()
       love.graphics.rectangle("fill",150 * scaleX, 280 * scaleY, 80 * scaleX, 116 * scaleY)
     end
   end
+
+-------Physics------
+function beginContact(a, b, coll)
+  x,y = coll:getNormal()
+end
+ 
+function endContact(a, b, coll)
+  persisting = 0
+end
+ 
+function preSolve(a, b, coll)
+  persisting = persisting + 1
+end
+ 
+function postSolve(a, b, coll, normalimpulse, tangentimpulse)
+end
 -------Physics------
