@@ -307,7 +307,7 @@ function CheckCollectables() -- function checks if any collectables have been co
   
   -- collect coins
   for i,v in ipairs(coins) do
-    local hitTest = CheckCollision(v.X, v.Y, v.Width, v.Height, pX, pY, pWidth, pHeight)
+    local hitTest = CheckCollision(v.X * scaleX, v.Y * scaleY, v.Width, v.Height, pX, pY, pWidth, pHeight)
     if hitTest then
       stageCoinsCollected = stageCoinsCollected + 1
       gameCoinsCollected = gameCoinsCollected + 1
