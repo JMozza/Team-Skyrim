@@ -143,7 +143,7 @@ function love.load()
   pHeight = 96 * scaleY -- constant; player's height
   pSpriteWidth = 48 -- constant; player's width for sprites from spritesheets
   pSpriteHeight = 96 -- constant; player's height for sprites from spritesheets
-  pJumpHeight = 15 * scaleX -- constant; pixels the player rises in the first frame of a jump
+  pJumpHeight = 15 -- constant; pixels the player rises in the first frame of a jump
   pGravity = 2 * scaleX -- constant; force due to gravity acting on player
   
   rainbowImage = love.graphics.newImage("sprites/New backgrounds/boxRAINBOW.png")
@@ -457,7 +457,7 @@ function love.update(dt)
 end
 
 function love.draw()
-  if gamestate == "easy" then
+  if gamestate == "easy" then    
     level1()
   end
   
@@ -523,14 +523,6 @@ end
 
 function love.mousereleased(x, y, button, isTouch)
   mouseReleased()
-end
-
-function love.touchpressed( id, x, y, dx, dy, pressure )
-  touchPress(x, y)
-end
-
-function love.touchreleased( id, x, y, dx, dy, pressure )
-  touchReleased()
 end
 
 function charSelection()

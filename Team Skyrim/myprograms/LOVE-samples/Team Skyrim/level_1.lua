@@ -9,7 +9,7 @@ function level1()
   end
   
   for i,v in ipairs(coins) do
-    love.graphics.draw(coinImage, v.X, v.Y, 0, spriteScalerX, spriteScalerY)
+    love.graphics.draw(coinImage, v.X * scaleX, v.Y * scaleY, 0, spriteScalerX, spriteScalerY)
   end
   
   for i,v in ipairs(letters) do
@@ -18,7 +18,7 @@ function level1()
       love.graphics.print((i - 1) * letterLengthOfSide, 0, 350 * scaleY)
     else
       love.graphics.draw(incorrectLetterImage, (i - 1) * letterLengthOfSide / scaleX, love.graphics.getHeight()/1.2, 0, (letterLengthOfSide / AImage:getWidth()) / spriteScalerX, (letterLengthOfSide / AImage:getHeight()) / spriteScalerY)
-      love.graphics.print(v.Letter, (i - 1) * letterLengthOfSide, 400)
+      love.graphics.print(v.Letter, (i - 1) * letterLengthOfSide / scaleX, love.graphics.getHeight() / 1.2)
     end
   end
   
