@@ -12,6 +12,7 @@ require "level_1"
 require "loadPositions"
 require "finishedScreenDraw"
 require "randomPositions"
+require "completedScreenDraw"
 
 function love.load()  
   
@@ -88,7 +89,7 @@ function love.load()
   optionfont = love.graphics.newFont("fonts/goodd.ttf", 12 * scaleX)
   subtitlefont = love.graphics.newFont("fonts/goodd.ttf", 34 * scaleX)
   font_12 = love.graphics.newFont(12 * scaleX)
-  font_50 = love.graphics.newFont(50)
+  font_50 = love.graphics.newFont(50 * scaleX)
 
   --Animation Variables
   grid = anim8.newGrid(240,56, titleSpritesheet:getWidth(), titleSpritesheet:getHeight())
@@ -236,14 +237,14 @@ function Reset()
   
   -- different letter lengths
   if level == 1 then
+    word = "FAST"
+    hint = "Very quick"
+  elseif level == 2 then
     word = "GAMES"
     hint = "Fun to play"
-  elseif level == 2 then
-    word = "DICKS"
-    hint = "Kinda phallic"
   else
-    word = "ECKSDEE"
-    hint = "xD"
+    word = "MOON"
+    hint = "In the sky"
   end
   
   collectableCount = #word
@@ -251,7 +252,7 @@ function Reset()
   -- variables for collected letters
   letters = {} -- collected letters
   letterCount = 0 -- amount of letters
-  letterLengthOfSide = (love.graphics.getWidth() / 5) *scaleX -- size of letter
+  letterLengthOfSide = (love.graphics.getWidth() / 5) * scaleX -- size of letter
   correctLetterOrder = true -- true if all letters have currently been collected in the correct order
   
   -- variables for stars
@@ -347,7 +348,7 @@ function charReset()
   -- variables for collected letters
   letters = {} -- collected letters
   letterCount = 0 -- amount of letters
-  letterLengthOfSide = (love.graphics.getWidth() / 5) *scaleX -- size of letter
+  letterLengthOfSide = (love.graphics.getWidth() / 5) * scaleX -- size of letter
   correctLetterOrder = true -- true if all letters have currently been collected in the correct order
   
   -- variables for stars
@@ -439,8 +440,6 @@ function love.update(dt)
     end
     
     CheckCollectables()
-    --CheckLeftWalls()
-    --CheckRightWalls()
   end
   
   -----------------Physics-------------
@@ -452,7 +451,11 @@ function love.update(dt)
   
   if collectableCount == 0 then -- level complete
     Delete()
-    gamestate = "easyComplete"
+    if level == 3 then
+      gamestate = "complete"
+    else
+      gamestate = "easyComplete"
+    end
   end
 end
 
@@ -463,6 +466,10 @@ function love.draw()
   
   if gamestate == "easyComplete" then
     endScreen()
+  end
+  
+  if gamestate == "complete" then
+    completeGame()
   end
   
   if gamestate == "menu" then
@@ -486,13 +493,13 @@ function love.draw()
     cButton_draw()
     love.graphics.setColor(255,0,255)
     love.graphics.setFont(subtitlefont)
-    love.graphics.print("Select your character", 20 *scaleX, 90 * scaleY)
+    love.graphics.print("Select your character", 20 * scaleX, 90 * scaleY)
     love.graphics.setColor(255,255,255)
     charSelection()
-    love.graphics.draw(pIdleImage, 45, 144)
-    love.graphics.draw(testIdle, 166, 144)
+    love.graphics.draw(pIdleImage, 45 * scaleX, 144 * scaleY, 0, spriteScalerX, spriteScalerY)
+    love.graphics.draw(testIdle, 166 * scaleX, 144 * scaleY, 0, spriteScalerX, spriteScalerY)
     animation:draw(titleSpritesheet, 15, 15, 0, spriteScalerX, spriteScalerY)
-    love.graphics.setColor(255,255,255)
+    love.graphics.setColor(255, 255, 255)
   end
     
   if gamestate == "options" then

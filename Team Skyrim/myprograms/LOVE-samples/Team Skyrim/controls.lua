@@ -79,6 +79,10 @@ function mousePress(x, y)
           objects.block2.body:applyAngularImpulse(555)
           objects.block2.body:applyLinearImpulse(520, -2000)
   end
+  
+  if gamestate == "complete" then
+    love.event.push("quit")
+  end
 end
 
 function mouseReleased()
